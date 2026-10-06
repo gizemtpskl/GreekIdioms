@@ -1,0 +1,4 @@
+file,model,prompt,condition,n,accuracy,accuracy_ci,macro_f1,macro_f1_ci,unparsed_or_refused
+all__baseline-always-idiomatic__classify__sentence.jsonl,baseline:always_idiomatic,classify,sentence,6,0.5,"[0.17, 0.83]",0.3333333333333333,"[0.14, 0.45]",0
+all__mlx-ilsp-Llama-Krikri-8B-Instruct-v1.5-4bit-mlx__use_en__context.jsonl,mlx:ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx,use_en,context,6,1.0,"[1.00, 1.00]",1.0,"[0.50, 1.00]",0
+all__mlx-ilsp-Llama-Krikri-8B-Instruct-v1.5-4bit-mlx__use_en__sentence.jsonl,mlx:ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx,use_en,sentence,6,0.5,"[0.17, 0.83]",0.3333333333333333,"[0.14, 0.45]",0

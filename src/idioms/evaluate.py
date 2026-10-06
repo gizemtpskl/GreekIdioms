@@ -115,14 +115,14 @@ def main(argv=None):
         if not records:
             continue
         first = records[0]
-        rows.append({"file": Path(path).name, "model": first["model"], "condition": first["condition"], **score(records)})
+        rows.append({"file": Path(path).name, "model": first["model"], "prompt": Path(first["prompt_file"]).stem, "condition": first["condition"], **score(records)})
         if args.breakdown:
             print(f"\n== {Path(path).name}")
             print_table(breakdown(records, "expression_id"), ["expression_id", "n", "literal", "idiomatic", "accuracy"])
             print()
             print_table(breakdown(records, "sentence_sufficient"), ["sentence_sufficient", "n", "literal", "idiomatic", "accuracy"])
 
-    columns = ["model", "condition", "n", "accuracy", "accuracy_ci", "macro_f1", "macro_f1_ci", "unparsed_or_refused"]
+    columns = ["model", "prompt", "condition", "n", "accuracy", "accuracy_ci", "macro_f1", "macro_f1_ci", "unparsed_or_refused"]
     print()
     print_table(rows, columns)
     Path(args.csv).parent.mkdir(parents=True, exist_ok=True)

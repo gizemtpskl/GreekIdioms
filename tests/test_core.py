@@ -3,7 +3,7 @@ from pathlib import Path
 
 from idioms.data import load_jsonl, load_splits, select, validate
 from idioms.metrics import accuracy, cohen_kappa, macro_f1, mcnemar_exact
-from idioms.models import parse_label
+from idioms.models import answer_words, parse_label
 from idioms.prompts import build_passage, build_prompt, load_template
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -14,11 +14,34 @@ class TestParseLabel(unittest.TestCase):
     def test_clean_answers(self):
         self.assertEqual(parse_label("literal"), "literal")
         self.assertEqual(parse_label("Idiomatic."), "idiomatic")
+        self.assertEqual(parse_label("idiomatic \n\nThe expression is not literal here"), "idiomatic")
+
+    def test_greek_answers(self):
+        self.assertEqual(parse_label("κυριολεκτικά"), "literal")
+        self.assertEqual(parse_label("**απάντηση: Κυριολεκτικά**"), "literal")
+        self.assertEqual(parse_label("ΜΕΤΑΦΟΡΙΚΆ."), "idiomatic")
+        self.assertEqual(parse_label("ιδιωματικά"), "idiomatic")
 
     def test_unclear_answers(self):
         self.assertIsNone(parse_label("It could be literal or idiomatic"))
-        self.assertIsNone(parse_label("κυριολεκτικά"))
+        self.assertIsNone(parse_label("κυριολεκτικά ή μεταφορικά"))
+        self.assertIsNone(parse_label("δεν ξέρω"))
         self.assertIsNone(parse_label(""))
+
+
+class TestAnswerWords(unittest.TestCase):
+    def test_every_prompt_names_its_answer_words(self):
+        expected = {
+            "classify": "literal", "classify_el": "literal", "use_en": "literal",
+            "use_el": "κυριολεκτικά", "physical_el": "κυριολεκτικά",
+        }
+        for name, literal_word in expected.items():
+            words = answer_words(load_template(ROOT / f"prompts/{name}.txt"))
+            self.assertEqual(words["literal"], literal_word, name)
+
+    def test_ambiguous_last_line_is_rejected(self):
+        with self.assertRaises(ValueError):
+            answer_words("Answer: literal, κυριολεκτικά or idiomatic.")
 
 
 class TestData(unittest.TestCase):

@@ -3,8 +3,10 @@
     python -m idioms.run --data data/sample/toy.jsonl --splits data/sample/splits.json \
         --split test --model anthropic:claude-opus-5-5 --condition context
 
-Predictions are appended one line at a time, and examples already in the output
-file are skipped, so an interrupted run can simply be restarted.
+Predictions go to <split>__<model>__<prompt name>__<condition>.jsonl. They are
+appended one line at a time, and examples already in the output file are
+skipped, so an interrupted run can simply be restarted. If the prompt file has
+been edited since, the run stops instead of mixing two prompt versions.
 """
 
 import argparse
@@ -19,15 +21,21 @@ from .models import OK, get_backend, parse_label
 from .prompts import CONDITIONS, build_prompt, load_template, template_hash
 
 
-def output_path(out_dir, split, model, condition):
+def output_path(out_dir, split, model, prompt_file, condition):
     slug = re.sub(r"[^A-Za-z0-9.-]+", "-", model)
-    return Path(out_dir) / f"{split or 'all'}__{slug}__{condition}.jsonl"
+    return Path(out_dir) / f"{split or 'all'}__{slug}__{Path(prompt_file).stem}__{condition}.jsonl"
 
 
-def already_done(path):
+def already_done(path, prompt_hash):
     if not path.exists():
         return set()
-    return {rec["id"] for rec in load_jsonl(path)}
+    records = load_jsonl(path)
+    if any(rec["prompt_hash"] != prompt_hash for rec in records):
+        raise SystemExit(
+            f"{path} was produced with a different version of the prompt file.\n"
+            "Delete it to rerun, or save the edited prompt under a new name."
+        )
+    return {rec["id"] for rec in records}
 
 
 def main(argv=None):
@@ -55,15 +63,15 @@ def main(argv=None):
     template = load_template(args.prompt)
     effort = None if args.effort == "none" else args.effort
     backend = get_backend(args.model, effort=effort)
-    out = output_path(args.out_dir, args.split, args.model, args.condition)
-    done = already_done(out)
+    out = output_path(args.out_dir, args.split, args.model, args.prompt, args.condition)
+    done = already_done(out, template_hash(template))
     todo = [ex for ex in examples if ex["id"] not in done]
     print(f"{len(examples)} examples, {len(done)} already done, running {len(todo)} -> {out}")
 
     for i, ex in enumerate(todo, 1):
         prompt = build_prompt(template, ex, args.condition)
         start = time.time()
-        raw, status = backend.classify(prompt)
+        raw, status, *extra = backend.classify(prompt)
         prediction = parse_label(raw) if status == OK else None
         record = {
             "id": ex["id"],
@@ -80,6 +88,7 @@ def main(argv=None):
             "prompt_hash": template_hash(template),
             "seconds": round(time.time() - start, 2),
             "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            **(extra[0] if extra else {}),
         }
         write_jsonl(out, [record], mode="a")
         print(f"[{i}/{len(todo)}] {ex['id']}: gold={ex['label']} pred={prediction} ({record['status']})")

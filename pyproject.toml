@@ -8,6 +8,7 @@ dependencies = []
 [project.optional-dependencies]
 anthropic = ["anthropic"]
 hf = ["transformers", "torch", "accelerate"]
+mlx = ["mlx-lm"]
 
 [build-system]
 requires = ["setuptools>=61"]
