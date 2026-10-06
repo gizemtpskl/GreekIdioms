@@ -16,6 +16,8 @@ src/idioms/      pipeline code
   prompts.py     build the passage for each condition
   models.py      model backends + answer parsing
   run.py         run one model × condition × split, save predictions
+  experiment.py  run everything on a split, choose the prompt on dev, summarise
+  figures.py     figures for the report
   evaluate.py    accuracy, macro-F1, bootstrap CIs, McNemar, breakdowns
   validate.py    check a data file, show label balance per expression
   agreement.py   inter-annotator agreement (Cohen's kappa)
@@ -35,7 +37,29 @@ pip install -e ".[mlx]"           # local models on an Apple Silicon Mac, no GPU
 
 For Claude models, set `ANTHROPIC_API_KEY` (or log in with `ant auth login`).
 
-## Workflow
+## Running the experiment
+
+Once the data and `splits.json` are ready, the whole experiment is two commands:
+
+```bash
+# 1. dev: baseline + both models x all prompts x both conditions; picks the prompt
+python -m idioms.experiment --data data/pilot/examples.jsonl --splits data/pilot/splits.json --split dev
+
+# 2. test: only the chosen prompt (the dev step prints this exact command)
+python -m idioms.experiment --data data/pilot/examples.jsonl --splits data/pilot/splits.json --split test --prompts prompts/<chosen>.txt
+```
+
+Then make the figures for the report (PNG and PDF in `results/figures/`; needs `pip install -e ".[figures]"`):
+
+```bash
+python -m idioms.figures --split test --prompt <chosen> --data data/pilot/examples.jsonl
+```
+
+This gives three figures: scores with 95% confidence intervals and the baseline, accuracy per expression with and without context, and the errors fixed or introduced by context with McNemar's p. It also saves a CSV with the numbers behind the per-expression figure.
+
+Each experiment step prints a results table (also saved as `results/<split>_summary.csv`) and the sentence-only vs. with-context comparison for each model. The test step refuses more than one prompt. Close memory-heavy apps first: each model needs about 5 GB.
+
+## Workflow (individual steps)
 
 ```bash
 # 0. draft examples from IDION entries (by entry number), then annotate them by hand

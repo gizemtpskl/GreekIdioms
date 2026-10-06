@@ -38,6 +38,58 @@ def already_done(path, prompt_hash):
     return {rec["id"] for rec in records}
 
 
+def load_examples(data_path, splits_path=None, split=None, limit=None):
+    """Validated, binary-labelled examples of one split."""
+    examples = load_jsonl(data_path)
+    problems = validate(examples)
+    if problems:
+        unlabelled = sum(not ex.get("label") for ex in examples)
+        hint = (f"\n{unlabelled} of {len(examples)} examples have no label yet: the file is still being annotated."
+                if unlabelled else "")
+        shown = "\n".join(problems[:10]) + (f"\n... and {len(problems) - 10} more" if len(problems) > 10 else "")
+        raise SystemExit(f"{data_path} has {len(problems)} problems, so nothing was run.{hint}\n"
+                         f"Full list: python -m idioms.validate {data_path}\n\n{shown}")
+    splits = load_splits(splits_path) if splits_path else None
+    examples = select(examples, splits, split)
+    return examples[:limit] if limit else examples
+
+
+def run_predictions(backend, model, examples, prompt_file, condition, out, verbose=True):
+    """Classify every example not yet in `out` and append the predictions to it."""
+    template = load_template(prompt_file)
+    done = already_done(out, template_hash(template))
+    todo = [ex for ex in examples if ex["id"] not in done]
+    if verbose:
+        print(f"{len(examples)} examples, {len(done)} already done, running {len(todo)} -> {out}")
+
+    for i, ex in enumerate(todo, 1):
+        prompt = build_prompt(template, ex, condition)
+        start = time.time()
+        raw, status, *extra = backend.classify(prompt)
+        prediction = parse_label(raw) if status == OK else None
+        record = {
+            "id": ex["id"],
+            "expression_id": ex["expression_id"],
+            "gold": ex["label"],
+            "prediction": prediction,
+            "status": status if prediction or status != OK else "unparsed",
+            "raw_output": raw,
+            "sentence_sufficient": ex.get("sentence_sufficient"),
+            "model": model,
+            "condition": condition,
+            "settings": backend.settings(),
+            "prompt_file": str(prompt_file),
+            "prompt_hash": template_hash(template),
+            "seconds": round(time.time() - start, 2),
+            "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            **(extra[0] if extra else {}),
+        }
+        write_jsonl(out, [record], mode="a")
+        if verbose:
+            print(f"[{i}/{len(todo)}] {ex['id']}: gold={ex['label']} pred={prediction} ({record['status']})")
+    return len(todo)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", required=True, help="annotated examples (JSONL)")
@@ -51,47 +103,11 @@ def main(argv=None):
     ap.add_argument("--limit", type=int, help="only run the first N examples (for quick checks)")
     args = ap.parse_args(argv)
 
-    examples = load_jsonl(args.data)
-    problems = validate(examples)
-    if problems:
-        raise SystemExit("data file has problems, run `python -m idioms.validate` first:\n" + "\n".join(problems))
-    splits = load_splits(args.splits) if args.splits else None
-    examples = select(examples, splits, args.split)
-    if args.limit:
-        examples = examples[: args.limit]
-
-    template = load_template(args.prompt)
+    examples = load_examples(args.data, args.splits, args.split, args.limit)
     effort = None if args.effort == "none" else args.effort
     backend = get_backend(args.model, effort=effort)
     out = output_path(args.out_dir, args.split, args.model, args.prompt, args.condition)
-    done = already_done(out, template_hash(template))
-    todo = [ex for ex in examples if ex["id"] not in done]
-    print(f"{len(examples)} examples, {len(done)} already done, running {len(todo)} -> {out}")
-
-    for i, ex in enumerate(todo, 1):
-        prompt = build_prompt(template, ex, args.condition)
-        start = time.time()
-        raw, status, *extra = backend.classify(prompt)
-        prediction = parse_label(raw) if status == OK else None
-        record = {
-            "id": ex["id"],
-            "expression_id": ex["expression_id"],
-            "gold": ex["label"],
-            "prediction": prediction,
-            "status": status if prediction or status != OK else "unparsed",
-            "raw_output": raw,
-            "sentence_sufficient": ex.get("sentence_sufficient"),
-            "model": args.model,
-            "condition": args.condition,
-            "settings": backend.settings(),
-            "prompt_file": args.prompt,
-            "prompt_hash": template_hash(template),
-            "seconds": round(time.time() - start, 2),
-            "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            **(extra[0] if extra else {}),
-        }
-        write_jsonl(out, [record], mode="a")
-        print(f"[{i}/{len(todo)}] {ex['id']}: gold={ex['label']} pred={prediction} ({record['status']})")
+    run_predictions(backend, args.model, examples, args.prompt, args.condition, out)
 
 
 if __name__ == "__main__":
