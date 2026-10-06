@@ -1,0 +1,17 @@
+[project]
+name = "greek-idioms"
+version = "0.1.0"
+description = "Literal vs. idiomatic classification of Modern Greek expressions with pretrained language models"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+anthropic = ["anthropic"]
+hf = ["transformers", "torch", "accelerate"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

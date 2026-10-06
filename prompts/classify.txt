@@ -1,0 +1,8 @@
+You will read a passage in Modern Greek. One sentence is marked with <target> tags, and inside it the expression "{expression}" is marked with <expr> tags.
+
+Decide whether the marked expression is used literally (its words keep their ordinary, physical meaning) or idiomatically (the expression as a whole has a figurative meaning).
+
+Passage:
+{passage}
+
+Answer with exactly one word: literal or idiomatic.
