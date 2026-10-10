@@ -25,6 +25,8 @@ Each folder holds an `examples.jsonl` file and a `splits.json` file.
 | `label_reviewer2` | optional | second reviewer's independent label, used by `python -m idioms.agreement` |
 | `notes` | optional | anything worth remembering (difficult case, reason for ambiguity, …) |
 
+
+*ann_01*: Angeliki Andreadi
 ## Splits (`splits.json`)
 
 ```json
