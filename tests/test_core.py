@@ -1,7 +1,10 @@
 import unittest
+import json
+import tempfile
 from pathlib import Path
 
 from idioms.data import load_jsonl, load_splits, select, validate
+from idioms.data import validate_duplicates, validate_separation, validate_split_coverage
 from idioms.metrics import accuracy, cohen_kappa, macro_f1, mcnemar_exact
 from idioms.models import parse_label
 from idioms.prompts import build_passage, build_prompt, load_template
@@ -22,6 +25,36 @@ class TestParseLabel(unittest.TestCase):
 
 
 class TestData(unittest.TestCase):
+    def test_project_data_and_splits(self):
+        pilot = load_jsonl(ROOT / "data/pilot/pilot.jsonl")
+        final = load_jsonl(ROOT / "data/final/final.jsonl")
+        splits = load_splits(ROOT / "data/splits.json")
+        for rows, split in [(pilot, "dev"), (final, "test")]:
+            self.assertEqual(validate(rows), [])
+            self.assertEqual(validate_duplicates(rows), [])
+            self.assertEqual(validate_split_coverage(rows, splits), [])
+            self.assertEqual(len(select(rows, splits, split)), len(rows))
+        self.assertEqual(validate_separation(pilot, final), [])
+
+    def test_leakage_and_duplicate_detection(self):
+        ex = load_jsonl(TOY)[0]
+        self.assertTrue(validate_separation([ex], [ex]))
+        renamed = dict(ex, id="other", expression_id="other")
+        self.assertTrue(validate_separation([ex], [renamed]))
+        self.assertTrue(validate_duplicates([ex, renamed]))
+        changed_context = dict(renamed, context_before="Different context.")
+        self.assertEqual(validate_duplicates([ex, changed_context]), [])
+        self.assertTrue(validate_split_coverage([ex], {"dev": []}))
+
+    def test_invalid_split_definitions(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "splits.json"
+            for invalid in [{"dev": ["e01"], "test": ["e01"]},
+                            {"dev": ["e01", "e01"]}, {"dev": "e01"}, []]:
+                path.write_text(json.dumps(invalid))
+                with self.assertRaises(ValueError):
+                    load_splits(path)
+
     def test_toy_file_is_valid(self):
         self.assertEqual(validate(load_jsonl(TOY)), [])
 

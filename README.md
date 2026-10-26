@@ -37,16 +37,18 @@ For Claude models, set `ANTHROPIC_API_KEY` (or log in with `ant auth login`).
 
 ```bash
 # 1. check the data
-python -m idioms.validate data/pilot/examples.jsonl --splits data/pilot/splits.json
+python -m idioms.validate data/pilot/pilot.jsonl --splits data/splits.json
+python -m idioms.validate data/final/final.jsonl --splits data/splits.json \
+    --against data/pilot/pilot.jsonl
 
 # 2. run a model under both conditions
-python -m idioms.run --data data/pilot/examples.jsonl --splits data/pilot/splits.json \
+python -m idioms.run --data data/pilot/pilot.jsonl --splits data/splits.json \
     --split dev --model anthropic:claude-opus-5-5 --condition sentence
-python -m idioms.run --data data/pilot/examples.jsonl --splits data/pilot/splits.json \
+python -m idioms.run --data data/pilot/pilot.jsonl --splits data/splits.json \
     --split dev --model anthropic:claude-opus-5-5 --condition context
 
 # baseline
-python -m idioms.run --data data/pilot/examples.jsonl --splits data/pilot/splits.json \
+python -m idioms.run --data data/pilot/pilot.jsonl --splits data/splits.json \
     --split dev --model baseline:always_idiomatic --condition sentence
 
 # 3. score
@@ -56,7 +58,7 @@ python -m idioms.evaluate --compare \
     results/predictions/dev__anthropic-claude-opus-5-5__context.jsonl
 
 # 4. agreement on the double-annotated subset
-python -m idioms.agreement data/pilot/examples.jsonl
+python -m idioms.agreement data/pilot/pilot.jsonl
 ```
 
 Model specs: `baseline:always_idiomatic`, `anthropic:<model id>`, `hf:<hugging face id>`. Greek-specific open models to consider are ILSP's Krikri and Meltemi (check the exact Hugging Face ids, e.g. `ilsp/Llama-Krikri-8B-Instruct`).

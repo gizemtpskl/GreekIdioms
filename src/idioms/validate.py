@@ -1,28 +1,39 @@
 """Check an annotated data file and show the label balance per expression.
 
-    python -m idioms.validate data/pilot/examples.jsonl [--splits data/pilot/splits.json]
+    python -m idioms.validate data/pilot/pilot.jsonl --splits data/splits.json
 """
 
 import argparse
 from collections import Counter
 
-from .data import label_counts_by_expression, load_jsonl, load_splits, validate
+from .data import (label_counts_by_expression, load_jsonl, load_splits, validate,
+                   validate_duplicates, validate_separation, validate_split_coverage)
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("data")
     ap.add_argument("--splits")
+    ap.add_argument("--against", help="other dataset that must have disjoint IDs and expressions")
     args = ap.parse_args(argv)
 
-    examples = load_jsonl(args.data)
-    problems = validate(examples)
+    try:
+        examples = load_jsonl(args.data)
+        problems = validate(examples)
+        problems.extend(validate_duplicates(examples))
+        if args.against:
+            problems.extend(validate_separation(examples, load_jsonl(args.against)))
+        splits = load_splits(args.splits) if args.splits else None
+        if splits is not None:
+            problems.extend(validate_split_coverage(examples, splits))
+    except (ValueError, OSError) as exc:
+        raise SystemExit(str(exc)) from exc
     for p in problems:
         print("PROBLEM:", p)
 
     split_of = {}
-    if args.splits:
-        for name, expr_ids in load_splits(args.splits).items():
+    if splits is not None:
+        for name, expr_ids in splits.items():
             split_of.update({e: name for e in expr_ids})
 
     print(f"\n{'expression_id':<15}{'split':<8}{'literal':>8}{'idiomatic':>10}{'ambiguous':>10}")

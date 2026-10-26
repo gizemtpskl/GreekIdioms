@@ -66,13 +66,48 @@ def load_splits(path):
     """splits.json maps split name -> list of expression_ids, e.g. {"dev": [...], "test": [...]}."""
     with open(path, encoding="utf-8") as f:
         splits = json.load(f)
+    if not isinstance(splits, dict) or not splits:
+        raise ValueError("splits must be a nonempty object mapping names to expression-id lists")
     seen = {}
     for name, expr_ids in splits.items():
+        if not isinstance(expr_ids, list) or any(not isinstance(e, str) or not e.strip() for e in expr_ids):
+            raise ValueError(f"split {name!r} must contain a list of nonempty expression ids")
         for expr_id in expr_ids:
             if expr_id in seen:
                 raise ValueError(f"expression {expr_id!r} is in both '{seen[expr_id]}' and '{name}'")
             seen[expr_id] = name
     return splits
+
+
+def validate_split_coverage(examples, splits):
+    assigned = {expr_id for ids in splits.values() for expr_id in ids}
+    missing = {ex["expression_id"] for ex in examples} - assigned
+    return [f"expressions not assigned to any split: {sorted(missing)}"] if missing else []
+
+
+def validate_duplicates(examples):
+    """Repeated passages are duplicates; different contexts for one target are allowed."""
+    seen = {}
+    problems = []
+    for ex in examples:
+        key = tuple(ex.get(field, "").strip() for field in (
+            "expression", "target_sentence", "span", "context_before", "context_after"
+        ))
+        if key in seen:
+            problems.append(f"duplicate passage: {seen[key]!r} and {ex['id']!r}")
+        else:
+            seen[key] = ex["id"]
+    return problems
+
+
+def validate_separation(examples, reference):
+    """Check development/evaluation files for shared IDs or citation forms."""
+    problems = []
+    for field in ("id", "expression_id", "expression"):
+        shared = {ex[field] for ex in examples} & {ex[field] for ex in reference}
+        if shared:
+            problems.append(f"overlap with reference in {field}: {sorted(shared)}")
+    return problems
 
 
 def select(examples, splits=None, split=None):

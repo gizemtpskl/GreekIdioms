@@ -1,6 +1,6 @@
 """Inter-annotator agreement on the subset labelled by a second reviewer.
 
-    python -m idioms.agreement data/pilot/examples.jsonl
+    python -m idioms.agreement data/pilot/pilot.jsonl
 
 Uses examples that have a `label_reviewer2` field; compares it with `label`.
 """

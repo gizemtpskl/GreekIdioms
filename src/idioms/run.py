@@ -14,7 +14,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .data import load_jsonl, load_splits, select, validate, write_jsonl
+from .data import (load_jsonl, load_splits, select, validate, write_jsonl,
+                   validate_duplicates, validate_split_coverage)
 from .models import OK, get_backend, parse_label
 from .prompts import CONDITIONS, build_prompt, load_template, template_hash
 
@@ -45,10 +46,15 @@ def main(argv=None):
 
     examples = load_jsonl(args.data)
     problems = validate(examples)
+    problems.extend(validate_duplicates(examples))
+    splits = load_splits(args.splits) if args.splits else None
+    if splits is not None:
+        problems.extend(validate_split_coverage(examples, splits))
     if problems:
         raise SystemExit("data file has problems, run `python -m idioms.validate` first:\n" + "\n".join(problems))
-    splits = load_splits(args.splits) if args.splits else None
     examples = select(examples, splits, args.split)
+    if not examples:
+        raise SystemExit("no binary-labelled examples selected; check the dataset and split")
     if args.limit:
         examples = examples[: args.limit]
 

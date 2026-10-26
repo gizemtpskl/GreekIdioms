@@ -4,7 +4,28 @@
 - `pilot/` is for the pilot set (about 5 expressions, 10–20 examples).
 - `final/` is for the expanded set (about 20 expressions, 120–160 examples).
 
-Each folder holds an `examples.jsonl` file and a `splits.json` file.
+The current draft files are `pilot/pilot.jsonl` (20 examples) and
+`final/final.jsonl` (100 examples). All are currently marked as constructed;
+they have not yet received independent second annotation. The final file is
+below the proposed 120–160-example target and is not a frozen benchmark.
+
+`data/splits.json` assigns `e01`–`e05` to development and `e06`–`e25` to test.
+Each dataset contains only its own expressions; the shared split file deliberately
+lists both. Toy data uses its own independent `sample/splits.json`.
+
+Validate both files and check their separation before inference:
+
+```bash
+python -m idioms.validate data/pilot/pilot.jsonl --splits data/splits.json
+python -m idioms.validate data/final/final.jsonl --splits data/splits.json \
+    --against data/pilot/pilot.jsonl
+```
+
+Checks reject unassigned expressions, duplicate passages, and shared example IDs,
+expression IDs, or exact citation forms across the two files. Identical target
+sentences with different contexts are allowed as intentional minimal pairs.
+Citation-form checks do not detect linguistic variants: Angeliki must also check
+that differently named expressions do not overlap between development and test.
 
 ## Example format (`examples.jsonl`, one JSON object per line)
 
@@ -26,7 +47,7 @@ Each folder holds an `examples.jsonl` file and a `splits.json` file.
 | `notes` | optional | anything worth remembering (difficult case, reason for ambiguity, …) |
 
 
-*ann_01*: Angeliki Andreadi
+*ann_1*: Angeliki Andreadi (the identifier currently used in the draft files).
 ## Splits (`splits.json`)
 
 ```json
