@@ -1,1 +1,1 @@
-"""Literal vs. idiomatic classification of Modern Greek expressions."""
+"""Literal vs. idiomatic classification of Modern Greek expressions, with and without context."""
