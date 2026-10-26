@@ -1,13 +1,10 @@
 [project]
 name = "greek-idioms"
-version = "0.1.0"
-description = "Literal vs. idiomatic classification of Modern Greek expressions with pretrained language models"
+version = "0.2.0"
+description = "Literal vs. idiomatic classification of Modern Greek expressions with and without context"
 requires-python = ">=3.10"
-dependencies = []
-
-[project.optional-dependencies]
-anthropic = ["anthropic"]
-hf = ["transformers", "torch", "accelerate"]
+# mlx-lm runs the models on Apple Silicon Macs
+dependencies = ["mlx-lm", "matplotlib"]
 
 [build-system]
 requires = ["setuptools>=61"]

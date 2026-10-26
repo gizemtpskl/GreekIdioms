@@ -1,0 +1,11 @@
+Below is a passage in Modern Greek. One sentence is marked with <target> tags, and in it the words of the expression "{expression}" are marked with <expr> tags.
+
+This expression has a well-known figurative (idiomatic) meaning, but the same words can also be used literally, to describe a real, physical situation. Do not decide whether the expression is an idiom in general. Decide how it is used in this particular sentence:
+
+- literal: the words describe what actually happens in the situation.
+- idiomatic: the words do not describe what actually happens; the expression as a whole carries its figurative meaning.
+
+Passage:
+{passage}
+
+Answer with exactly one word: literal or idiomatic.

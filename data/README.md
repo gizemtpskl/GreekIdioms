@@ -1,36 +1,47 @@
 # Data
 
-- `sample/` contains toy examples we wrote **only for testing the pipeline**. They are not part of the dataset and must not be reported as results.
-- `pilot/` is for the pilot set (about 5 expressions, 10–20 examples).
-- `final/` is for the expanded set (about 20 expressions, 120–160 examples).
+| file | split | expressions | examples |
+|---|---|---|---|
+| `pilot/pilot.jsonl` | dev: used only to choose the prompt | e01–e05 | 20 |
+| `final/final.jsonl` | test: the reported results | e06–e25 | 100 |
 
-Each folder holds an `examples.jsonl` file and a `splits.json` file.
+All examples were constructed and labelled by annotator `ann_1` (Angeliki Andreadi). No expression appears in both files.
 
-## Example format (`examples.jsonl`, one JSON object per line)
+## Design
 
-| field | required | description |
-|---|---|---|
-| `id` | yes | unique id, e.g. `pilot-001` |
-| `expression_id` | yes | id of the expression, e.g. `e01`; splits are defined over these ids |
-| `expression` | yes | dictionary (citation) form, e.g. `σπάω τον πάγο` |
-| `target_sentence` | yes | the sentence to classify |
-| `span` | yes | the expression **exactly as it appears** in `target_sentence` (inflected form), e.g. `σπάσει τον πάγο` |
-| `context_before` | no | 1–2 sentences before the target (empty string if none) |
-| `context_after` | no | 1–2 sentences after the target (empty string if none) |
-| `label` | yes | `literal`, `idiomatic` or `ambiguous` (ambiguous examples are kept in the file but left out of the evaluation) |
-| `sentence_sufficient` | recommended | `true` if the target sentence alone settles the meaning, `false` if you need the context to decide |
-| `source` | yes | where the sentence comes from (corpus + document/URL), or how it was constructed |
-| `is_constructed` | yes | `true` for examples we wrote ourselves, `false` for natural examples |
-| `annotator` | recommended | who assigned `label` |
-| `label_reviewer2` | optional | second reviewer's independent label, used by `python -m idioms.agreement` |
-| `notes` | optional | anything worth remembering (difficult case, reason for ambiguity, …) |
+Each expression has examples of these kinds:
 
+| kind | label | `sentence_sufficient` | context |
+|---|---|---|---|
+| clear idiomatic use | idiomatic | `true` | before and after |
+| clear literal use | literal | `true` | before and after |
+| minimal pair, idiomatic half | idiomatic | `false` | before only |
+| minimal pair, literal half | literal | `false` | before only |
+| a second idiomatic use (test only) | idiomatic | `true` | before and after |
 
-*ann_01*: Angeliki Andreadi
-## Splits (`splits.json`)
+The two halves of a minimal pair share the same target sentence. Only the preceding context decides the label (`notes`: "context dependent pair").
 
-```json
-{"dev": ["e01", "e02"], "test": ["e03", "e04", "..."]}
-```
+## Fields (one JSON object per line)
 
-Splits are made by **expression**, not by example, so every example of an expression is in the same split. Use `dev` to develop the prompt. Run on `test` only after the prompt is fixed.
+| field | description |
+|---|---|
+| `id` | unique id (`pilot-001`, `test-001`, …) |
+| `expression_id` | id of the expression (`e01` … `e25`) |
+| `expression` | the expression in dictionary form, e.g. `σπάω τον πάγο` |
+| `target_sentence` | the sentence to classify |
+| `span` | the expression **exactly as it appears** in `target_sentence`, including capitals and inflection |
+| `context_before` / `context_after` | surrounding sentences (empty string if none) |
+| `label` | `literal` or `idiomatic` |
+| `sentence_sufficient` | `true` if the target sentence alone settles the meaning |
+| `source` | where the sentence comes from (`constructed`) |
+| `is_constructed` | `true` for sentences written for this dataset |
+| `annotator` | who assigned `label` |
+| `notes` | free text |
+| `label_reviewer2` | *optional:* a second annotator's independent label, for `python -m idioms.agreement` |
+
+`python -m idioms.data` checks that every field is present and of the right type, that labels are valid, ids unique, and every `span` occurs in its sentence. It also prints an overview.
+
+## Changes since the annotated files were committed
+
+- `pilot.jsonl`, `pilot-020`: removed a stray `;` at the end of the line, which made it invalid JSON.
+- `final.jsonl`, `test-010`, `test-075`, `test-076`: `span` capitalised to match the sentence-initial capital letter.

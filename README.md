@@ -1,77 +1,87 @@
 # Understanding Greek Idioms in Context
 
-Can pretrained language models tell literal from idiomatic uses of Modern Greek expressions, and does surrounding context help? Each example is classified twice, once with the **target sentence only** and once **with 1–2 surrounding sentences**. An always-idiomatic baseline gives a reference score.
+Can pretrained language models tell literal from idiomatic uses of Modern Greek expressions, and does surrounding context help? Every example is classified twice: with the **target sentence only**, and **with the surrounding sentences**. An always-idiomatic baseline gives a reference score.
 
-## Layout
+## Data
 
-```
-data/            annotated examples + splits (see data/README.md for the format)
-  sample/        toy examples for testing the pipeline only
-  pilot/         pilot set
-  final/         full evaluation set
-guidelines/      annotation guidelines
-prompts/         prompt templates ({expression} and {passage} are filled in)
-src/idioms/      pipeline code
-  data.py        load / validate / split examples
-  prompts.py     build the passage for each condition
-  models.py      model backends + answer parsing
-  run.py         run one model × condition × split, save predictions
-  evaluate.py    accuracy, macro-F1, bootstrap CIs, McNemar, breakdowns
-  validate.py    check a data file, show label balance per expression
-  agreement.py   inter-annotator agreement (Cohen's kappa)
-results/         predictions (one JSONL per run) and metrics.csv
-tests/
-```
+| split | file | expressions | examples | use |
+|---|---|---|---|---|
+| dev | `data/pilot/pilot.jsonl` | 5 | 20 (10 literal / 10 idiomatic) | choosing the prompt |
+| test | `data/final/final.jsonl` | 20 | 100 (40 literal / 60 idiomatic) | the reported results |
+
+No expression appears in both splits. Every expression includes a **minimal pair**: the same target sentence twice, literal in one example and idiomatic in the other, distinguishable only by its context. See [data/README.md](data/README.md) for the fields. `python -m idioms.data` checks both files and prints an overview.
+
+## Models
+
+| name | model | why |
+|---|---|---|
+| `krikri` | [ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx](https://huggingface.co/ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx) | Llama-3.1-8B with continued pretraining on Greek (ILSP) |
+| `llama` | [mlx-community/Llama-3.1-8B-Instruct-4bit](https://huggingface.co/mlx-community/Llama-3.1-8B-Instruct-4bit) | the same base model without the Greek training |
+| `baseline` | — | always answers "idiomatic" |
+
+The two models differ only in Krikri's Greek training, so comparing them isolates its effect. Both are 4-bit builds that run on a 16 GB Apple Silicon Mac with [mlx-lm](https://github.com/ml-explore/mlx-lm) (each about 4.6 GB, downloaded on first use). Answers are produced by greedy generation and read from the first line (`--method generate`, default), or by comparing the log-probabilities of the two answer words (`--method score`).
+
+## Prompts
+
+All prompts are in `prompts/`. `{expression}` and `{passage}` are filled in, and the last line names the two answer words. In the passage, the target sentence is wrapped in `<target>` tags and the expression in `<expr>` tags. The context condition adds the surrounding sentences around it.
+
+| prompt | language | approach |
+|---|---|---|
+| `basic_en` / `basic_el` | English / Greek | literal vs. idiomatic, with a short definition of each |
+| `use_en` / `use_el` | English / Greek | says plainly to judge *this* use, not whether the phrase is an idiom in general |
+| `physical_el` | Greek | does the phrase describe something that really happens? |
 
 ## Setup
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[anthropic]"     # Claude models
-pip install -e ".[hf]"            # local Hugging Face models (needs a GPU for 7–8B models)
+pip install -e .
+python -m unittest discover tests
 ```
 
-For Claude models, set `ANTHROPIC_API_KEY` (or log in with `ant auth login`).
-
-## Workflow
+## Running the experiment
 
 ```bash
-# 1. check the data
-python -m idioms.validate data/pilot/examples.jsonl --splits data/pilot/splits.json
-
-# 2. run a model under both conditions
-python -m idioms.run --data data/pilot/examples.jsonl --splits data/pilot/splits.json \
-    --split dev --model anthropic:claude-opus-5-5 --condition sentence
-python -m idioms.run --data data/pilot/examples.jsonl --splits data/pilot/splits.json \
-    --split dev --model anthropic:claude-opus-5-5 --condition context
-
-# baseline
-python -m idioms.run --data data/pilot/examples.jsonl --splits data/pilot/splits.json \
-    --split dev --model baseline:always_idiomatic --condition sentence
-
-# 3. score
-python -m idioms.evaluate results/predictions/dev__*.jsonl --breakdown
-python -m idioms.evaluate --compare \
-    results/predictions/dev__anthropic-claude-opus-5-5__sentence.jsonl \
-    results/predictions/dev__anthropic-claude-opus-5-5__context.jsonl
-
-# 4. agreement on the double-annotated subset
-python -m idioms.agreement data/pilot/examples.jsonl
+python -m idioms.experiment dev     # every prompt x both models x both conditions on dev; chooses the prompt
+python -m idioms.experiment test    # the chosen prompt only, on test; prints the full analysis
+python -m idioms.figures --split test --prompt <chosen prompt>
 ```
 
-Model specs: `baseline:always_idiomatic`, `anthropic:<model id>`, `hf:<hugging face id>`. Greek-specific open models to consider are ILSP's Krikri and Meltemi (check the exact Hugging Face ids, e.g. `ilsp/Llama-Krikri-8B-Instruct`).
+- **The dev step** saves its choice in `results/chosen_prompt.json`: the prompt with the highest macro-F1, averaged over both models and both conditions.
+- **The test step** can only use that prompt, and stops if the prompt file was edited after it was chosen. This prevents tuning on test data.
+- **Interrupted runs can be restarted:** finished predictions are kept, so rerunning a command continues where it stopped.
+- **Close memory-heavy apps first:** each model needs about 5 GB.
 
-A run that stops halfway can be restarted with the same command; examples already in the output file are skipped. Every prediction records the model, its settings and a hash of the prompt template, so results can be traced back to the setup that produced them.
+Outputs:
 
-## Notes on the method
+| file | content |
+|---|---|
+| `results/predictions/<split>__<model>__<prompt>__<condition>.jsonl` | one prediction per example, with the raw model output, settings and a fingerprint of the prompt |
+| `results/<split>_summary.csv` | accuracy and macro-F1 with 95% bootstrap CIs per run |
+| `results/figures/` | scores, accuracy by example type, context effect, per-expression accuracy (PNG + PDF) |
 
-- **Splits are by expression.** Develop prompts on `dev` and run `test` only once the prompt is fixed.
-- **Answers that can't be parsed and refusals count as wrong**, and are reported in the `unparsed_or_refused` column. If that column isn't close to zero, fix the prompt on `dev`.
-- **Claude settings.** Current Claude models don't accept `temperature`, so repeated runs aren't guaranteed to give identical answers. `--effort` (default `low`) is recorded with each prediction. No automatic model fallback is used, so every prediction in a file comes from the model named in it.
-- **Small dataset.** Report the bootstrap confidence intervals, and use McNemar's test for sentence vs. context, because both conditions are run on the same items.
-
-## Tests
+Other commands:
 
 ```bash
-PYTHONPATH=src python3 -m unittest discover tests
+python -m idioms.run --split dev --model krikri --prompt use_en --condition context   # a single run
+python -m idioms.evaluate --split test --prompt use_en --details                       # analysis tables
+python -m idioms.agreement                                                             # Cohen's kappa, once label_reviewer2 exists
+```
+
+## Analysis
+
+- **Accuracy and macro-F1** with 95% bootstrap confidence intervals. On test, macro-F1 is the main measure: 60% of the examples are idiomatic, so always answering "idiomatic" already reaches 0.60 accuracy (macro-F1 0.375).
+- **Context effect:** accuracy with context minus without, with a paired bootstrap CI, the numbers of errors fixed and introduced, and McNemar's exact test.
+- **By example type:** accuracy on sentence-sufficient vs. context-dependent examples (`sentence_sufficient`), and the share of minimal pairs where both examples are right. Without context, a model sees the same input for both halves of a pair, so it can get at most one of them right.
+- **Per expression:** accuracy for each expression in each condition.
+
+## Layout
+
+```
+data/        pilot.jsonl (dev), final.jsonl (test), data/README.md
+prompts/     prompt templates
+src/idioms/  data.py, prompts.py, models.py, run.py, metrics.py, evaluate.py,
+             experiment.py, figures.py, agreement.py
+results/     predictions, summaries, figures
+tests/
 ```

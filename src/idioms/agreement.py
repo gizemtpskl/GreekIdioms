@@ -1,32 +1,28 @@
-"""Inter-annotator agreement on the subset labelled by a second reviewer.
+"""Inter-annotator agreement, for examples that also have a second annotator's label.
 
-    python -m idioms.agreement data/pilot/examples.jsonl
+    python -m idioms.agreement
 
-Uses examples that have a `label_reviewer2` field; compares it with `label`.
+Add a `label_reviewer2` field ("literal" or "idiomatic") to the examples the
+second annotator labelled, without showing them the first label.
 """
 
-import argparse
-
-from .data import load_jsonl
+from .data import SPLITS, read_jsonl
 from .metrics import cohen_kappa
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("data")
-    args = ap.parse_args(argv)
-
-    pairs = [(ex["label"], ex["label_reviewer2"]) for ex in load_jsonl(args.data) if ex.get("label_reviewer2")]
-    if not pairs:
-        raise SystemExit("no examples have a 'label_reviewer2' field yet")
-    a, b = zip(*pairs)
-    agree = sum(x == y for x, y in pairs)
-    print(f"double-annotated: {len(pairs)}")
-    print(f"raw agreement:    {agree / len(pairs):.3f} ({agree}/{len(pairs)})")
-    print(f"Cohen's kappa:    {cohen_kappa(list(a), list(b)):.3f}")
-    disagreements = [ex for ex in load_jsonl(args.data) if ex.get("label_reviewer2") and ex["label"] != ex["label_reviewer2"]]
-    for ex in disagreements:
-        print(f"  {ex['id']}: {ex['label']} vs {ex['label_reviewer2']}  | {ex['target_sentence']}")
+def main():
+    examples = [ex for path in SPLITS.values() for ex in read_jsonl(path) if ex.get("label_reviewer2")]
+    if not examples:
+        raise SystemExit("No example has a 'label_reviewer2' yet, so agreement can't be computed.")
+    first = [ex["label"] for ex in examples]
+    second = [ex["label_reviewer2"] for ex in examples]
+    agree = sum(a == b for a, b in zip(first, second))
+    print(f"double-annotated examples: {len(examples)}")
+    print(f"raw agreement: {agree / len(examples):.3f} ({agree}/{len(examples)})")
+    print(f"Cohen's kappa: {cohen_kappa(first, second):.3f}")
+    for ex in examples:
+        if ex["label"] != ex["label_reviewer2"]:
+            print(f"  disagree {ex['id']}: {ex['label']} vs {ex['label_reviewer2']} | {ex['target_sentence']}")
 
 
 if __name__ == "__main__":
