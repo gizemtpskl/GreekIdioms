@@ -1,0 +1,10 @@
+{
+  "prompt": "physical_el",
+  "prompt_hash": "2940f9800717",
+  "method": "score",
+  "models": [
+    "krikri",
+    "llama"
+  ],
+  "dev_macro_f1": 0.562
+}
