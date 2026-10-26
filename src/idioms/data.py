@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SPLITS = {"dev": ROOT / "data/pilot/pilot.jsonl", "test": ROOT / "data/final/final.jsonl"}
 LABELS = ("literal", "idiomatic")
+ANNOTATION_LABELS = LABELS + ("ambiguous",)
 
 # field -> expected type; every example must have all of them
 FIELDS = {
@@ -33,7 +34,10 @@ def read_jsonl(path):
         for line_no, line in enumerate(f, 1):
             if line.strip():
                 try:
-                    records.append(json.loads(line))
+                    record = json.loads(line)
+                    if not isinstance(record, dict):
+                        raise SystemExit(f"{path}, line {line_no}: expected a JSON object")
+                    records.append(record)
                 except json.JSONDecodeError as e:
                     raise SystemExit(f"{path}, line {line_no}: not valid JSON ({e})") from None
     return records
@@ -55,12 +59,16 @@ def check(examples):
         for field, kind in FIELDS.items():
             if not isinstance(ex.get(field), kind):
                 problems.append(f"{where}: '{field}' should be a {kind.__name__}, got {ex.get(field)!r}")
-        if ex.get("id") in seen:
-            problems.append(f"{where}: duplicate id")
-        seen.add(ex.get("id"))
-        if ex.get("label") not in LABELS:
-            problems.append(f"{where}: label must be 'literal' or 'idiomatic', got {ex.get('label')!r}")
-        if isinstance(ex.get("span"), str) and ex.get("span") not in ex.get("target_sentence", ""):
+            elif kind is str and field not in ("context_before", "context_after") and not ex[field].strip():
+                problems.append(f"{where}: '{field}' must not be empty")
+        if isinstance(ex.get("id"), str):
+            if ex["id"] in seen:
+                problems.append(f"{where}: duplicate id")
+            seen.add(ex["id"])
+        if ex.get("label") not in ANNOTATION_LABELS:
+            problems.append(f"{where}: label must be one of {ANNOTATION_LABELS}, got {ex.get('label')!r}")
+        if (isinstance(ex.get("span"), str) and isinstance(ex.get("target_sentence"), str)
+                and ex["span"] not in ex["target_sentence"]):
             problems.append(f"{where}: span {ex.get('span')!r} is not in the target sentence")
     return problems
 
@@ -68,11 +76,20 @@ def check(examples):
 def load_split(split):
     if split not in SPLITS:
         raise SystemExit(f"split must be one of {list(SPLITS)}, got {split!r}")
-    examples = read_jsonl(SPLITS[split])
-    problems = check(examples)
-    if problems:
-        raise SystemExit(f"{SPLITS[split]} has {len(problems)} problems:\n" + "\n".join(problems[:20]))
-    return examples
+    datasets = {name: read_jsonl(path) for name, path in SPLITS.items()}
+    for name, rows in datasets.items():
+        problems = check(rows)
+        if problems:
+            raise SystemExit(f"{SPLITS[name]} has {len(problems)} problems:\n" + "\n".join(problems[:20]))
+    for field in ("id", "expression_id", "expression"):
+        shared = {ex[field] for ex in datasets["dev"]} & {ex[field] for ex in datasets["test"]}
+        if shared:
+            raise SystemExit(f"development/test overlap in {field}: {sorted(shared)}")
+    examples = datasets[split]
+    pending = [ex["id"] for ex in examples if ex.get("review_status") == "pending"]
+    if pending:
+        raise SystemExit(f"resolve pending annotation disagreements before inference: {pending}")
+    return [ex for ex in examples if ex["label"] in LABELS]
 
 
 def minimal_pairs(examples):
@@ -109,7 +126,9 @@ def overview(split, examples):
 
 def main():
     for split in SPLITS:
-        overview(split, load_split(split))
+        selected = load_split(split)
+        overview(split, selected)
+        print(f"  {len(read_jsonl(SPLITS[split])) - len(selected)} ambiguous examples excluded from evaluation")
         print()
     dev, test = load_split("dev"), load_split("test")
     shared = ({ex["expression"] for ex in dev} & {ex["expression"] for ex in test}) | \

@@ -9,7 +9,7 @@ Can pretrained language models tell literal from idiomatic uses of Modern Greek 
 | dev | `data/pilot/pilot.jsonl` | 5 | 20 (10 literal / 10 idiomatic) | choosing the prompt |
 | test | `data/final/final.jsonl` | 20 | 100 (40 literal / 60 idiomatic) | the reported results |
 
-No expression appears in both splits. Every expression includes a **minimal pair**: the same target sentence twice, literal in one example and idiomatic in the other, distinguishable only by its context. See [data/README.md](data/README.md) for the fields. `python -m idioms.data` checks both files and prints an overview.
+No expression appears in both splits. Every expression currently includes a **minimal pair**: the same target sentence twice, with different reference labels and contexts. These constructed examples still require independent Greek review. See [data/README.md](data/README.md) for the fields. `python -m idioms.data` checks both files, rejects split overlap, and prints an overview. Ambiguous examples remain in the files and are excluded from binary evaluation.
 
 ## Models
 
@@ -19,7 +19,7 @@ No expression appears in both splits. Every expression includes a **minimal pair
 | `llama` | [mlx-community/Llama-3.1-8B-Instruct-4bit](https://huggingface.co/mlx-community/Llama-3.1-8B-Instruct-4bit) | the same base model without the Greek training |
 | `baseline` | — | always answers "idiomatic" |
 
-The two models differ only in Krikri's Greek training, so comparing them isolates its effect. Both are 4-bit builds that run on a 16 GB Apple Silicon Mac with [mlx-lm](https://github.com/ml-explore/mlx-lm) (each about 4.6 GB, downloaded on first use). Answers are produced by greedy generation and read from the first line (`--method generate`, default), or by comparing the log-probabilities of the two answer words (`--method score`).
+These models provide a comparison between a Greek-adapted model and a related general model. It does not isolate a single training change: tokenization, instruction tuning, and quantized builds may also differ. Both use [mlx-lm](https://github.com/ml-explore/mlx-lm) on Apple Silicon. Model setup and checkpoint revisions must be verified before the final experiments. Answers are produced by greedy generation (`--method generate`, default), or by comparing the log-probabilities of the two answer words (`--method score`). The scoring method is a separate experimental setting; its raw log-probabilities are not calibrated confidence scores.
 
 ## Prompts
 
@@ -42,14 +42,15 @@ python -m unittest discover tests
 ## Running the experiment
 
 ```bash
-python -m idioms.experiment dev     # every prompt x both models x both conditions on dev; chooses the prompt
-python -m idioms.experiment test    # the chosen prompt only, on test; prints the full analysis
-python -m idioms.figures --split test --prompt <chosen prompt>
+python -m idioms.experiment dev --results-dir results/verified
+# After dataset review and freezing the experimental setup:
+python -m idioms.experiment test --results-dir results/verified
+python -m idioms.figures --split test --prompt <chosen prompt> --results-dir results/verified
 ```
 
-- **The dev step** saves its choice in `results/chosen_prompt.json`: the prompt with the highest macro-F1, averaged over both models and both conditions.
-- **The test step** can only use that prompt, and stops if the prompt file was edited after it was chosen. This prevents tuning on test data.
-- **Interrupted runs can be restarted:** finished predictions are kept, so rerunning a command continues where it stopped.
+- **The dev step** saves its choice in `<results-dir>/chosen_prompt.json`: the prompt with the highest macro-F1, averaged over the selected models and both conditions. It also records the method, model settings, development-data fingerprint, and inference-code fingerprint.
+- **The test step** reuses the saved models, settings, method and prompt. It rejects a different `--models` list or changed development data, inference code, or prompt. `--method` and `--prompts` are dev-only options.
+- **Interrupted runs can be restarted:** only verified completed predictions are skipped. Changed inputs, labels, settings, prompts, inference code, or runtime versions require a new results directory.
 - **Close memory-heavy apps first:** each model needs about 5 GB.
 
 Outputs:
@@ -57,16 +58,54 @@ Outputs:
 | file | content |
 |---|---|
 | `results/predictions/<split>__<model>__<prompt>__<condition>.jsonl` | one prediction per example, with the raw model output, settings and a fingerprint of the prompt |
+| matching `*.manifest.json` | full run identity, expected items, input fingerprints, prompt text, settings and runtime versions |
+| `results/predictions/failures/` | failed inference calls; separate from classification results |
 | `results/<split>_summary.csv` | accuracy and macro-F1 with 95% bootstrap CIs per run |
 | `results/figures/` | scores, accuracy by example type, context effect, per-expression accuracy (PNG + PDF) |
 
 Other commands:
 
 ```bash
-python -m idioms.run --split dev --model krikri --prompt use_en --condition context   # a single run
-python -m idioms.evaluate --split test --prompt use_en --details                       # analysis tables
+python -m idioms.run --split dev --model krikri --prompt use_en --condition context --out-dir results/verified/predictions
+python -m idioms.evaluate --split test --prompt use_en --details --results-dir results/verified
 python -m idioms.agreement                                                             # Cohen's kappa, once label_reviewer2 exists
 ```
+
+The output paths above are relative to `--results-dir` (default `results`), or
+`--out-dir` for a single run. The checked-in `results/predictions/` and
+`results/chosen_prompt.json` are historical pilot trials from the earlier pipeline.
+They are preserved unchanged, but cannot be resumed or used to start final testing.
+Use a fresh results directory to rerun development with the corrected pipeline.
+To inspect the old scores explicitly:
+
+```bash
+python -m idioms.evaluate --split dev --allow-legacy
+```
+
+Legacy mode cannot verify the original inputs or parser version. It does not
+upgrade old records or make them eligible for resumption. It also cannot mix
+legacy predictions with new manifested predictions in the same comparison.
+
+### Answer parsing and failures
+
+Generated answers must consist of a single label: `literal`, `idiomatic`,
+`κυριολεκτικά`, `μεταφορικά`, or `ιδιωματικά`. Case, accents, outer whitespace,
+and one final period are tolerated. Explanations, markup, negation and additional
+lines are `unparsed`, with a null prediction that counts as wrong. Refusals, when
+explicitly reported by a backend, also have null predictions. Neither is retried
+to obtain a better answer. Earlier generation trials used a more permissive parser.
+
+A local inference exception is logged as `request_error` and stops the run; it
+does not produce a prediction or enter the accuracy denominator. Resolve the
+underlying error and rerun the same command to continue. Automatic retries are
+not used for local memory/configuration errors. The current models run locally;
+there is no API backend in this branch.
+
+Evaluation rejects incomplete new runs, duplicate IDs, mismatched reference labels,
+and incompatible paired runs. A damaged last JSONL line requires inspection before
+resumption. Each output file allows one writer at a time. Model repository IDs are
+recorded, but remote checkpoint revisions are not yet pinned; freezing those is
+part of model setup before final evaluation.
 
 ## Analysis
 

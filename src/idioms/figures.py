@@ -14,9 +14,10 @@ Writes PNG (slides) and PDF (report) files to results/figures/:
 
 import argparse
 import csv
+from pathlib import Path
 
 from .data import ROOT, load_split, minimal_pairs
-from .evaluate import by_group, context_effect, gold_and_pred, load_runs, pair_accuracy
+from .evaluate import by_group, context_effect, gold_and_pred, load_runs, pair_accuracy, validate_reference
 from .metrics import accuracy, bootstrap_ci, macro_f1
 from .models import BASELINE, MODELS
 
@@ -187,9 +188,12 @@ def per_expression_figure(plt, rows, split):
 
 
 def main(argv=None):
+    global OUT
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--split", required=True, choices=["dev", "test"])
     ap.add_argument("--prompt", required=True)
+    ap.add_argument("--results-dir", type=Path, default=ROOT / "results")
+    ap.add_argument("--allow-legacy", action="store_true", help="inspect historical runs without manifests")
     args = ap.parse_args(argv)
 
     import matplotlib
@@ -198,10 +202,15 @@ def main(argv=None):
     import matplotlib.pyplot as plt
 
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9, "hatch.color": SURFACE, "hatch.linewidth": 1.2})
-    runs = load_runs(args.split, args.prompt)
+    try:
+        runs = load_runs(args.split, args.prompt, args.results_dir / "predictions", args.allow_legacy)
+    except (ValueError, OSError) as exc:
+        ap.exit(1, f"error: {exc}\n")
     if not any(m != BASELINE for m, _, _ in runs):
         raise SystemExit(f"no model predictions for {args.split} with prompt {args.prompt!r}")
     examples = load_split(args.split)
+    validate_reference(runs, examples)
+    OUT = args.results_dir / "figures"
     OUT.mkdir(parents=True, exist_ok=True)
 
     save(scores_figure(plt, runs, args.prompt, args.split), f"scores_{args.split}")
@@ -215,7 +224,7 @@ def main(argv=None):
         writer = csv.DictWriter(f, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
-    print(f"figures written to {OUT.relative_to(ROOT)}/")
+    print(f"figures written to {OUT}/")
 
 
 if __name__ == "__main__":

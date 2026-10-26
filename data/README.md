@@ -31,7 +31,7 @@ The two halves of a minimal pair share the same target sentence. Only the preced
 | `target_sentence` | the sentence to classify |
 | `span` | the expression **exactly as it appears** in `target_sentence`, including capitals and inflection |
 | `context_before` / `context_after` | surrounding sentences (empty string if none) |
-| `label` | `literal` or `idiomatic` |
+| `label` | `literal`, `idiomatic`, or `ambiguous`; ambiguous rows are retained but excluded from binary inference |
 | `sentence_sufficient` | `true` if the target sentence alone settles the meaning |
 | `source` | where the sentence comes from (`constructed`) |
 | `is_constructed` | `true` for sentences written for this dataset |
@@ -39,7 +39,16 @@ The two halves of a minimal pair share the same target sentence. Only the preced
 | `notes` | free text |
 | `label_reviewer2` | *optional:* a second annotator's independent label, for `python -m idioms.agreement` |
 
-`python -m idioms.data` checks that every field is present and of the right type, that labels are valid, ids unique, and every `span` occurs in its sentence. It also prints an overview.
+`python -m idioms.data` checks that every field is present and of the right type,
+required text is nonempty, labels are valid, IDs are unique, and every nonempty
+`span` occurs in its sentence. It rejects development/test overlap in example IDs,
+expression IDs, or exact expression names. It prints the binary evaluation overview
+and the number of excluded ambiguous items. Items marked `review_status: pending`
+cannot be used for inference until adjudicated.
+
+The independent-review and adjudication workflow on `ebrar/pipeline-validation`
+still needs to be integrated after this branch is merged. Do not replace its
+preserved independent labels with final adjudicated labels when calculating agreement.
 
 ## Changes since the annotated files were committed
 

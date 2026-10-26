@@ -9,21 +9,38 @@ accuracy and accuracy per expression.
 """
 
 import argparse
+import warnings
 from collections import defaultdict
+from pathlib import Path
 
 from .data import load_split, minimal_pairs, read_jsonl
 from .metrics import accuracy, bootstrap_ci, macro_f1, mcnemar_exact, paired_bootstrap_diff
 from .models import BASELINE
 from .run import PREDICTIONS
+from .provenance import align_records, fingerprint, load_predictions, manifest_path
 
 
-def load_runs(split, prompt=None):
+def load_runs(split, prompt=None, pred_dir=None, allow_legacy=False):
     """{(model, prompt, condition): records} for every prediction file of the split."""
     runs = {}
-    for path in sorted(PREDICTIONS.glob(f"{split}__*.jsonl")):
+    legacy = []
+    for path in sorted(Path(pred_dir or PREDICTIONS).glob(f"{split}__*.jsonl")):
         records = read_jsonl(path)
         if records and (prompt is None or records[0]["prompt"] == prompt or records[0]["model"] == BASELINE):
-            runs[(records[0]["model"], records[0]["prompt"], records[0]["condition"])] = records
+            records = load_predictions(path, allow_legacy=allow_legacy)
+            if not manifest_path(path).exists():
+                legacy.append(path)
+            key = (records[0]["model"], records[0]["prompt"], records[0]["condition"])
+            if key in runs:
+                raise ValueError(f"duplicate run for {key}")
+            if records[0].get("split") != split:
+                raise ValueError(f"{path}: split metadata does not match the requested split")
+            if runs:
+                align_records(next(iter(runs.values())), records)
+            runs[key] = records
+    if legacy:
+        warnings.warn(f"Inspecting {len(legacy)} historical runs without manifests; "
+                      "their inputs, settings and parser version cannot be verified.", stacklevel=2)
     return runs
 
 
@@ -62,9 +79,15 @@ def pair_accuracy(records, pairs):
 
 def context_effect(sentence_records, context_records):
     """How adding context changed the predictions on the same examples."""
-    a = {r["id"]: r for r in sentence_records}
-    b = {r["id"]: r for r in context_records}
-    ids = sorted(a.keys() & b.keys())
+    a, b = align_records(sentence_records, context_records)
+    for example_id in a:
+        for field in ("model", "settings", "prompt", "prompt_hash"):
+            if a[example_id].get(field) != b[example_id].get(field):
+                raise ValueError(f"{example_id}: context comparison differs in {field}")
+    for records, expected in ((sentence_records, "sentence"), (context_records, "context")):
+        if any("condition" in r and r["condition"] != expected for r in records):
+            raise ValueError(f"expected the {expected} condition")
+    ids = sorted(a)
     gold = [a[i]["gold"] for i in ids]
     pred_a = [a[i]["prediction"] for i in ids]
     pred_b = [b[i]["prediction"] for i in ids]
@@ -92,6 +115,9 @@ def fmt(value):
 
 
 def print_table(rows, columns):
+    if not rows:
+        print("No rows to display.")
+        return
     widths = {c: max(len(c), *(len(fmt(r[c])) for r in rows)) for c in columns}
     print("  ".join(c.ljust(widths[c]) for c in columns))
     for r in rows:
@@ -106,7 +132,20 @@ def summary_rows(runs):
     return [{"model": m, "prompt": p, "condition": c, **scores(records)} for (m, p, c), records in runs.items()]
 
 
+def validate_reference(runs, examples):
+    """Ensure current dataset metadata can be attached to the saved runs."""
+    reference = [{"id": ex["id"], "gold": ex["label"], "prediction": None,
+                  "expression_id": ex["expression_id"], "sentence_sufficient": ex["sentence_sufficient"]}
+                 for ex in examples]
+    for records in runs.values():
+        align_records(reference, [{k: v for k, v in r.items() if k not in ("data_hash", "pipeline_hash")}
+                                  for r in records])
+        if records[0].get("data_hash") and records[0]["data_hash"] != fingerprint(examples):
+            raise ValueError("dataset changed since inference; cannot attach current examples to these predictions")
+
+
 def print_details(runs, examples):
+    validate_reference(runs, examples)
     pairs = minimal_pairs(examples)
     names = {ex["expression_id"]: ex["expression"] for ex in examples}
     models = sorted({(m, p) for m, p, _ in runs if m != BASELINE})
@@ -138,14 +177,20 @@ def main(argv=None):
     ap.add_argument("--split", required=True, choices=["dev", "test"])
     ap.add_argument("--prompt", help="only runs with this prompt (the baseline is always shown)")
     ap.add_argument("--details", action="store_true")
+    ap.add_argument("--results-dir", type=Path, default=PREDICTIONS.parent)
+    ap.add_argument("--allow-legacy", action="store_true", help="inspect historical runs without manifests")
     args = ap.parse_args(argv)
 
-    runs = load_runs(args.split, args.prompt)
-    if not runs:
-        raise SystemExit(f"no predictions for {args.split} in {PREDICTIONS}")
-    print_table(summary_rows(runs), SUMMARY_COLUMNS)
-    if args.details:
-        print_details(runs, load_split(args.split))
+    try:
+        runs = load_runs(args.split, args.prompt, args.results_dir / "predictions", args.allow_legacy)
+        if not runs:
+            raise SystemExit(f"no predictions for {args.split} in {args.results_dir / 'predictions'}")
+        validate_reference(runs, load_split(args.split))
+        print_table(summary_rows(runs), SUMMARY_COLUMNS)
+        if args.details:
+            print_details(runs, load_split(args.split))
+    except (ValueError, OSError) as exc:
+        ap.exit(1, f"error: {exc}\n")
 
 
 if __name__ == "__main__":

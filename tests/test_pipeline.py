@@ -51,8 +51,9 @@ class TestPrompts(unittest.TestCase):
 class TestAnswers(unittest.TestCase):
     def test_parse(self):
         self.assertEqual(parse_answer("literal"), "literal")
-        self.assertEqual(parse_answer("Idiomatic.\n\nThe phrase is not literal"), "idiomatic")
-        self.assertEqual(parse_answer("**Απάντηση: ΚΥΡΙΟΛΕΚΤΙΚΆ**"), "literal")
+        self.assertEqual(parse_answer("  ΚΥΡΙΟΛΕΚΤΙΚΆ.\n"), "literal")
+        self.assertIsNone(parse_answer("Idiomatic.\n\nThe phrase is not literal"))
+        self.assertIsNone(parse_answer("**Απάντηση: ΚΥΡΙΟΛΕΚΤΙΚΆ**"))
         self.assertEqual(parse_answer("μεταφορικά."), "idiomatic")
         self.assertIsNone(parse_answer("λιττερά"))
         self.assertIsNone(parse_answer("literal or idiomatic"))

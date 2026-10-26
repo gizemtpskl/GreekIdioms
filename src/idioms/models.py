@@ -1,11 +1,11 @@
 """The models: an always-idiomatic baseline and two local 8B models run with mlx-lm.
 
-Krikri is Llama-3.1-8B with continued pretraining on Greek, so comparing the two
-isolates the effect of the Greek training. Both are ILSP / Meta 4-bit builds
-that fit on a 16 GB Apple Silicon Mac.
+The comparison evaluates a Greek-adapted model and a related general model.
+It does not isolate a single training change; tokenizers, instruction tuning,
+and quantized builds may also differ.
 
 Two ways to get an answer from a model:
-    generate  the model writes its answer (greedy decoding); the first line is parsed
+    generate  the model writes a single answer label (greedy decoding)
     score     the model's log-probability of each of the two answer words is compared
 """
 
@@ -19,8 +19,8 @@ MODELS = {
 BASELINE = "baseline"
 METHODS = ("generate", "score")
 
-# answer stems, accent-free: any word starting with one of them counts
-ANSWER_STEMS = {"literal": ("literal", "κυριολεκτ"), "idiomatic": ("idiomatic", "μεταφορικ", "ιδιωματικ")}
+ANSWER_LABELS = {"literal": "literal", "idiomatic": "idiomatic",
+                 "κυριολεκτικα": "literal", "μεταφορικα": "idiomatic", "ιδιωματικα": "idiomatic"}
 
 
 def strip_accents(text):
@@ -28,12 +28,16 @@ def strip_accents(text):
 
 
 def parse_answer(text):
-    """'literal' / 'idiomatic' from a generated answer, or None if it doesn't name exactly one.
-    Only the first non-empty line counts: models sometimes add an explanation after it."""
-    first_line = next((line for line in text.splitlines() if line.strip()), "")
-    words = re.findall(r"\w+", strip_accents(first_line.lower()))
-    found = {label for label, stems in ANSWER_STEMS.items() for w in words if w.startswith(stems)}
-    return found.pop() if len(found) == 1 else None
+    """Accept only one full English/Greek label, optionally followed by a period.
+
+    Case, accents and outer whitespace are ignored. Explanations, negations,
+    prefixes, markup and multiple answers are invalid, even on later lines.
+    """
+    if not isinstance(text, str):
+        return None
+    normalized = strip_accents(text.strip().casefold())
+    match = re.fullmatch(r"(literal|idiomatic|κυριολεκτικα|μεταφορικα|ιδιωματικα)\.?", normalized)
+    return ANSWER_LABELS[match.group(1)] if match else None
 
 
 class AlwaysIdiomatic:
@@ -41,7 +45,7 @@ class AlwaysIdiomatic:
     settings = {}
 
     def predict(self, prompt, answer_words):
-        return {"prediction": "idiomatic", "raw_output": ""}
+        return {"prediction": "idiomatic", "raw_output": "idiomatic", "status": "ok"}
 
 
 class MLXModel:
@@ -66,9 +70,13 @@ class MLXModel:
         prompt_ids = self._prompt_ids(prompt)
         if self.method == "generate":
             from mlx_lm import generate
+            from mlx_lm.sample_utils import make_sampler
 
-            text = generate(self.model, self.tokenizer, prompt=prompt_ids, max_tokens=self.max_tokens)
-            return {"prediction": parse_answer(text), "raw_output": text}
+            text = generate(self.model, self.tokenizer, prompt=prompt_ids, max_tokens=self.max_tokens,
+                            sampler=make_sampler(temp=0.0))
+            prediction = parse_answer(text)
+            return {"prediction": prediction, "raw_output": text,
+                    "status": "ok" if prediction else "unparsed"}
         logprobs = {label: self._logprob(prompt_ids, word) for label, word in answer_words.items()}
         best = max(logprobs, key=logprobs.get)
         return {"prediction": best, "raw_output": answer_words[best],
