@@ -2,7 +2,7 @@ import unittest
 
 from idioms.data import check, load_split, minimal_pairs
 from idioms.metrics import accuracy, cohen_kappa, macro_f1, mcnemar_exact
-from idioms.models import parse_answer
+from idioms.models import DEFAULT_METHOD, MODELS, REVISIONS, parse_answer
 from idioms.prompts import Template, passage, prompt_names
 from idioms.evaluate import context_effect, pair_accuracy
 
@@ -46,6 +46,16 @@ class TestPrompts(unittest.TestCase):
             self.assertNotIn("{", text, name)
             self.assertIn("<expr>", text, name)
             self.assertEqual(set(t.answer_words), {"literal", "idiomatic"}, name)
+
+
+class TestModels(unittest.TestCase):
+    def test_every_model_has_a_pinned_commit(self):
+        self.assertEqual(set(REVISIONS), set(MODELS))
+        for revision in REVISIONS.values():
+            self.assertRegex(revision, r"^[0-9a-f]{40}$")
+
+    def test_score_is_the_main_method(self):
+        self.assertEqual(DEFAULT_METHOD, "score")
 
 
 class TestAnswers(unittest.TestCase):

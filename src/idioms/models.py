@@ -16,8 +16,17 @@ MODELS = {
     "krikri": "ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx",
     "llama": "mlx-community/Llama-3.1-8B-Instruct-4bit",
 }
+# Hugging Face commit of each checkpoint, so every run loads exactly the same weights.
+# Change only together with a fresh results directory.
+REVISIONS = {
+    "krikri": "140ab6af4203751d7f91896e6d534f11a1e1863d",
+    "llama": "90215b22ec18e72f623dde2ea7af4097025160e2",
+}
 BASELINE = "baseline"
 METHODS = ("generate", "score")
+# score is the main method: the generate output is often a label followed by an explanation,
+# which the strict parser counts as unparsed.
+DEFAULT_METHOD = "score"
 
 ANSWER_LABELS = {"literal": "literal", "idiomatic": "idiomatic",
                  "κυριολεκτικα": "literal", "μεταφορικα": "idiomatic", "ιδιωματικα": "idiomatic"}
@@ -49,15 +58,15 @@ class AlwaysIdiomatic:
 
 
 class MLXModel:
-    def __init__(self, key, method="generate", max_tokens=10):
+    def __init__(self, key, method=DEFAULT_METHOD, max_tokens=10):
         from mlx_lm import load
 
         if method not in METHODS:
             raise SystemExit(f"method must be one of {METHODS}")
         self.key, self.method, self.max_tokens = key, method, max_tokens
         self.name = key if method == "generate" else f"{key}-score"
-        self.model, self.tokenizer = load(MODELS[key])
-        self.settings = {"hf_id": MODELS[key], "method": method,
+        self.model, self.tokenizer = load(MODELS[key], revision=REVISIONS[key])
+        self.settings = {"hf_id": MODELS[key], "revision": REVISIONS[key], "method": method,
                          **({"max_tokens": max_tokens, "decoding": "greedy"} if method == "generate" else {})}
 
     def _prompt_ids(self, prompt):
@@ -92,7 +101,7 @@ class MLXModel:
         return sum(logprobs[i - 1, ids[i]].item() for i in range(len(prompt_ids), len(ids)))
 
 
-def load_model(key, method="generate"):
+def load_model(key, method=DEFAULT_METHOD):
     if key == BASELINE:
         return AlwaysIdiomatic()
     if key not in MODELS:

@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .data import ROOT, LABELS, check, load_split, read_jsonl, write_jsonl
-from .models import BASELINE, METHODS, MODELS, load_model
+from .models import BASELINE, DEFAULT_METHOD, METHODS, MODELS, load_model
 from .prompts import CONDITIONS, Template, prompt_names
 from .provenance import (fingerprint, make_manifest, manifest_path, read_manifest,
                          validate_predictions)
@@ -120,7 +120,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--split", required=True, choices=["dev", "test"])
     ap.add_argument("--model", required=True, choices=[BASELINE, *MODELS])
-    ap.add_argument("--method", default="generate", choices=METHODS)
+    ap.add_argument("--method", default=DEFAULT_METHOD, choices=METHODS)
     ap.add_argument("--prompt", required=True, choices=prompt_names())
     ap.add_argument("--condition", required=True, choices=CONDITIONS)
     ap.add_argument("--out-dir", type=Path, default=PREDICTIONS)

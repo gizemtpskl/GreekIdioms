@@ -19,7 +19,7 @@ No expression appears in both splits. Every expression currently includes a **mi
 | `llama` | [mlx-community/Llama-3.1-8B-Instruct-4bit](https://huggingface.co/mlx-community/Llama-3.1-8B-Instruct-4bit) | the same base model without the Greek training |
 | `baseline` | — | always answers "idiomatic" |
 
-These models provide a comparison between a Greek-adapted model and a related general model. It does not isolate a single training change: tokenization, instruction tuning, and quantized builds may also differ. Both use [mlx-lm](https://github.com/ml-explore/mlx-lm) on Apple Silicon. Model setup and checkpoint revisions must be verified before the final experiments. Answers are produced by greedy generation (`--method generate`, default), or by comparing the log-probabilities of the two answer words (`--method score`). The scoring method is a separate experimental setting; its raw log-probabilities are not calibrated confidence scores.
+These models provide a comparison between a Greek-adapted model and a related general model. It does not isolate a single training change: tokenization, instruction tuning, and quantized builds may also differ. Both use [mlx-lm](https://github.com/ml-explore/mlx-lm) on Apple Silicon, loaded at pinned checkpoint revisions. The main method compares the log-probabilities of the two answer words (`--method score`, default), so every example gets one of the two labels. Its raw log-probabilities are not calibrated confidence scores. Greedy generation (`--method generate`) is available as a separate setting, but in trials the models usually add an explanation after the label, which the strict parser counts as `unparsed` (see below).
 
 ## Prompts
 
@@ -103,9 +103,9 @@ there is no API backend in this branch.
 
 Evaluation rejects incomplete new runs, duplicate IDs, mismatched reference labels,
 and incompatible paired runs. A damaged last JSONL line requires inspection before
-resumption. Each output file allows one writer at a time. Model repository IDs are
-recorded, but remote checkpoint revisions are not yet pinned; freezing those is
-part of model setup before final evaluation.
+resumption. Each output file allows one writer at a time. Each model is loaded
+at a pinned Hugging Face commit (`REVISIONS` in `src/idioms/models.py`), and the
+repository ID and commit are recorded in every manifest.
 
 ## Analysis
 

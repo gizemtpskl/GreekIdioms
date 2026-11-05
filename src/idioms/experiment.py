@@ -24,7 +24,7 @@ from statistics import mean
 
 from .data import ROOT, load_split
 from .evaluate import SUMMARY_COLUMNS, fmt, print_details, print_table, summary_rows
-from .models import BASELINE, METHODS, MODELS, free_memory, load_model
+from .models import BASELINE, DEFAULT_METHOD, METHODS, MODELS, free_memory, load_model
 from .prompts import CONDITIONS, Template, prompt_names
 from .run import run
 from .provenance import PROTOCOL_VERSION, fingerprint, load_predictions, pipeline_fingerprint, runtime_versions
@@ -133,7 +133,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("step", choices=["dev", "test"])
     ap.add_argument("--models", nargs="+", choices=list(MODELS), help="test defaults to the models saved by dev")
-    ap.add_argument("--method", choices=METHODS, help="dev step only (default: generate); test reuses dev's")
+    ap.add_argument("--method", choices=METHODS, help=f"dev step only (default: {DEFAULT_METHOD}); test reuses dev's")
     ap.add_argument("--prompts", nargs="+", help="dev step only (default: all prompts)")
     ap.add_argument("--results-dir", type=Path, default=RESULTS)
     args = ap.parse_args(argv)
@@ -142,7 +142,7 @@ def main(argv=None):
     args.results_dir.mkdir(parents=True, exist_ok=True)
     try:
         if args.step == "dev":
-            dev(args.models or list(MODELS), args.method or "generate", args.prompts or prompt_names(), args.results_dir)
+            dev(args.models or list(MODELS), args.method or DEFAULT_METHOD, args.prompts or prompt_names(), args.results_dir)
         else:
             test(args.models, args.results_dir)
     except (ValueError, OSError, RuntimeError) as exc:
