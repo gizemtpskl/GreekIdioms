@@ -62,9 +62,10 @@ These commands run from the repository root after setup. For annotation work and
 tests alone, no model dependencies are needed: use `PYTHONPATH=src python3` in
 place of `python` below.
 
-1. Resolve the open linguistic rules in the
-   [guidelines](../guidelines/annotation_guidelines.md) using examples outside the
-   review set. Review all pilot items. Decide the final-set review subset and
+1. Read the versioned annotation rules in the
+   [guidelines](../guidelines/annotation_guidelines.md) and practice using examples
+   outside the review set. Both reviewers should use the same version. Review
+   all pilot items. Decide the final-set review subset and
    record its size and selection method before looking at model predictions.
 2. Export a blind packet. `data/review/pilot/` already contains a blank packet
    generated from the current pilot file with seed 0. The command below shows

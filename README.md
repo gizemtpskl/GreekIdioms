@@ -46,9 +46,10 @@ notes, import a second review, and record adjudication while preserving both
 independent judgments. See [the workflow commands](data/README.md#review-workflow)
 and [annotation guidelines](guidelines/annotation_guidelines.md).
 
-A blank packet for all 20 pilot examples is in `data/review/pilot/`. Agree on the
-open guideline decisions before handing only `reviewer.csv` and the guidelines
-to the reviewer. Compute agreement before discussing disagreements. Resolve all
+A blank packet for all 20 pilot examples is in `data/review/pilot/`. Read the
+annotation rules and practice on examples outside the review set before handing
+only `reviewer.csv` and the guidelines to the reviewer. Compute agreement before
+discussing disagreements. Resolve all
 pending labels and sentence-sufficiency judgments before using the reviewed data
 for inference; ambiguous examples remain excluded from binary evaluation.
 
