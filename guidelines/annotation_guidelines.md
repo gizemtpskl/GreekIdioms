@@ -40,5 +40,46 @@ For each example, decide how the marked expression is used in the **target sente
 
 ## 6. Double annotation
 
-- The second reviewer labels examples **without seeing** `label`, then writes their label to `label_reviewer2`.
-- Discuss disagreements after computing agreement (`python -m idioms.agreement`). Keep the original labels in a copy so agreement can be reported honestly.
+Before the pilot review, Angeliki and the reviewer should agree on the open rules
+in sections 3 and 4, using examples outside the review set. Record their decisions
+here before final annotation. The implementation does not decide these linguistic
+questions for them.
+
+- Review all 20 pilot items independently. Select any final-set shared subset
+  before inspecting model predictions, and document its size and selection method.
+- Give the reviewer only `reviewer.csv` and these guidelines. Do not share the
+  original JSONL, primary notes, model predictions, or completed adjudication files
+  until their independent review is submitted. Do not tell them the label balance.
+- Open the CSV as UTF-8. Preserve its headers, IDs, passages, and row contents.
+  Fill only `label_reviewer2`, `sentence_sufficient_reviewer2`, and
+  `notes_reviewer2`. Save a completed copy as `reviewer_completed.csv`.
+- Read the target first, then the context, following section 2. This CSV shows
+  both: sentence sufficiency is a reviewer judgment, not a blinded human
+  sentence-only experiment.
+- Use `literal`, `idiomatic`, or `ambiguous`; enter `true` or `false` for
+  sentence sufficiency. Explain every ambiguous label and any text-quality issue
+  in the notes. Flag proposed text corrections there rather than editing passages.
+- If both readings remain plausible, or both are intentionally activated, use
+  `ambiguous`. Do not force a binary label to match a quota.
+
+After import, compute agreement **before discussing disagreements**. The tool
+compares preserved `label_reviewer1` and `label_reviewer2`, including ambiguous
+items. Report the shared-subset size, raw agreement, Cohen's kappa, and how the
+subset was chosen. If both reviewers use just one identical category, kappa is
+undefined; raw agreement is still reported.
+
+Angeliki and the second reviewer then discuss disagreements in either the label
+or sentence sufficiency. For each pending item, record `final_label`,
+`final_sentence_sufficient`, the adjudicator(s), and a short reason. If the reading
+cannot be resolved, set the final label to `ambiguous`; it remains in the dataset
+but is excluded from binary evaluation. Do not overwrite independent labels.
+
+The import command creates a new reviewed JSONL and an adjudication CSV. Pending
+items cannot be selected for inference. The adjudication command creates another
+new JSONL, updating the evaluation `label` and `sentence_sufficient` while retaining
+both original judgments. Unreviewed items outside a shared subset keep their
+primary labels; report that they were not double-annotated.
+
+If passages change after export, revise the source and export a new review packet.
+The import checks the dataset fingerprint and rejects altered passages or a changed
+source dataset. Preserve old packets and outputs as the annotation history.

@@ -39,6 +39,25 @@ pip install -e .
 python -m unittest discover tests
 ```
 
+## Independent annotation review
+
+The review tools export a shuffled CSV without the first annotator's labels or
+notes, import a second review, and record adjudication while preserving both
+independent judgments. See [the workflow commands](data/README.md#review-workflow)
+and [annotation guidelines](guidelines/annotation_guidelines.md).
+
+A blank packet for all 20 pilot examples is in `data/review/pilot/`. Agree on the
+open guideline decisions before handing only `reviewer.csv` and the guidelines
+to the reviewer. Compute agreement before discussing disagreements. Resolve all
+pending labels and sentence-sufficiency judgments before using the reviewed data
+for inference; ambiguous examples remain excluded from binary evaluation.
+
+The experiment reads the canonical `data/pilot/pilot.jsonl` and
+`data/final/final.jsonl` files. Review commands create separate outputs; after
+human review, retain the annotation history and adopt the approved output at the
+corresponding canonical path before freezing the experiment. The blank packet
+does not mean the dataset has been independently reviewed.
+
 ## Running the experiment
 
 ```bash
@@ -68,7 +87,7 @@ Other commands:
 ```bash
 python -m idioms.run --split dev --model krikri --prompt use_en --condition context --out-dir results/verified/predictions
 python -m idioms.evaluate --split test --prompt use_en --details --results-dir results/verified
-python -m idioms.agreement                                                             # Cohen's kappa, once label_reviewer2 exists
+python -m idioms.agreement data/review/pilot/reviewed.jsonl  # before adjudication
 ```
 
 The output paths above are relative to `--results-dir` (default `results`), or
@@ -121,6 +140,7 @@ data/        pilot.jsonl (dev), final.jsonl (test), data/README.md
 prompts/     prompt templates
 src/idioms/  data.py, prompts.py, models.py, run.py, metrics.py, evaluate.py,
              experiment.py, figures.py, agreement.py
+             review.py
 results/     predictions, summaries, figures
 tests/
 ```

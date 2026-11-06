@@ -63,4 +63,4 @@ def cohen_kappa(labels_a, labels_b):
     n = len(labels_a)
     observed = sum(a == b for a, b in zip(labels_a, labels_b)) / n
     expected = sum(labels_a.count(c) * labels_b.count(c) for c in set(labels_a) | set(labels_b)) / n**2
-    return 1.0 if expected == 1 else (observed - expected) / (1 - expected)
+    return float("nan") if expected == 1 else (observed - expected) / (1 - expected)
