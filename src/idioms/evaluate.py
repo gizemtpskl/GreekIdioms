@@ -2,6 +2,7 @@
 
     python -m idioms.evaluate --split test                  # one row per run
     python -m idioms.evaluate --split test --prompt use_en --details
+    python -m idioms.evaluate --split dev --grid            # macro-F1, models x prompts
 
 --details adds, for each model: the effect of adding context (McNemar test),
 scores for sentence-sufficient vs. context-dependent examples, minimal-pair
@@ -132,6 +133,28 @@ def summary_rows(runs):
     return [{"model": m, "prompt": p, "condition": c, **scores(records)} for (m, p, c), records in runs.items()]
 
 
+def grid_rows(runs):
+    """One row per model, one column per prompt: macro-F1 as 'sentence / context'.
+
+    The baseline ignores the prompt, so its score is shown under every prompt.
+    """
+    f1 = {key: macro_f1(*gold_and_pred(records)) for key, records in runs.items()}
+    prompts = sorted({p for _, p, _ in runs})
+    models = [BASELINE] * any(m == BASELINE for m, _, _ in runs) + sorted({m for m, _, _ in runs if m != BASELINE})
+
+    def cell(model, prompt):
+        found = {c: v for (m, p, c), v in f1.items() if m == model and (p == prompt or model == BASELINE)}
+        return " / ".join(f"{found[c]:.2f}" if c in found else "-" for c in ("sentence", "context"))
+
+    return prompts, [{"model": m, **{p: cell(m, p) for p in prompts}} for m in models]
+
+
+def print_grid(runs):
+    prompts, rows = grid_rows(runs)
+    print("macro-F1 (sentence / context)")
+    print_table(rows, ["model", *prompts])
+
+
 def validate_reference(runs, examples):
     """Ensure current dataset metadata can be attached to the saved runs."""
     reference = [{"id": ex["id"], "gold": ex["label"], "prediction": None,
@@ -177,6 +200,7 @@ def main(argv=None):
     ap.add_argument("--split", required=True, choices=["dev", "test"])
     ap.add_argument("--prompt", help="only runs with this prompt (the baseline is always shown)")
     ap.add_argument("--details", action="store_true")
+    ap.add_argument("--grid", action="store_true", help="compact view: macro-F1 per model (rows) and prompt (columns)")
     ap.add_argument("--results-dir", type=Path, default=PREDICTIONS.parent)
     ap.add_argument("--allow-legacy", action="store_true", help="inspect historical runs without manifests")
     args = ap.parse_args(argv)
@@ -186,7 +210,10 @@ def main(argv=None):
         if not runs:
             raise SystemExit(f"no predictions for {args.split} in {args.results_dir / 'predictions'}")
         validate_reference(runs, load_split(args.split))
-        print_table(summary_rows(runs), SUMMARY_COLUMNS)
+        if args.grid:
+            print_grid(runs)
+        else:
+            print_table(summary_rows(runs), SUMMARY_COLUMNS)
         if args.details:
             print_details(runs, load_split(args.split))
     except (ValueError, OSError) as exc:

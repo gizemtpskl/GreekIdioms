@@ -1,4 +1,4 @@
-"""The models: an always-idiomatic baseline and two local 8B models run with mlx-lm.
+"""The models: an always-idiomatic baseline and local 7-8B models run with mlx-lm.
 
 The comparison evaluates a Greek-adapted model and a related general model.
 It does not isolate a single training change; tokenizers, instruction tuning,
@@ -7,20 +7,36 @@ and quantized builds may also differ.
 Two ways to get an answer from a model:
     generate  the model writes a single answer label (greedy decoding)
     score     the model's log-probability of each of the two answer words is compared
+
+Models without a ready-made 4-bit MLX build are converted once on this machine:
+
+    python -m idioms.models build meltemi
 """
 
+import argparse
 import re
 import unicodedata
+
+from .data import ROOT
 
 MODELS = {
     "krikri": "ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx",
     "llama": "mlx-community/Llama-3.1-8B-Instruct-4bit",
+    "meltemi": "ilsp/Meltemi-7B-Instruct-v1.5",  # full-precision source, converted locally (LOCAL_BUILDS)
 }
+# the models dev uses when --models is not given
+DEFAULT_MODELS = ("krikri", "llama")
 # Hugging Face commit of each checkpoint, so every run loads exactly the same weights.
 # Change only together with a fresh results directory.
 REVISIONS = {
     "krikri": "140ab6af4203751d7f91896e6d534f11a1e1863d",
     "llama": "90215b22ec18e72f623dde2ea7af4097025160e2",
+    "meltemi": "77d7fa68ee9f9c0addf6ed93acdc32ebafde9394",
+}
+# Models converted to 4-bit MLX on this machine, with the same quantization as the
+# ready-made builds above. The output folder is not in git; build it with `build`.
+LOCAL_BUILDS = {
+    "meltemi": {"path": "local_models/Meltemi-7B-Instruct-v1.5-4bit", "q_bits": 4, "q_group_size": 64},
 }
 BASELINE = "baseline"
 METHODS = ("generate", "score")
@@ -65,8 +81,16 @@ class MLXModel:
             raise SystemExit(f"method must be one of {METHODS}")
         self.key, self.method, self.max_tokens = key, method, max_tokens
         self.name = key if method == "generate" else f"{key}-score"
-        self.model, self.tokenizer = load(MODELS[key], revision=REVISIONS[key])
+        build = LOCAL_BUILDS.get(key)
+        if build:
+            path = ROOT / build["path"]
+            if not (path / "config.json").exists():
+                raise SystemExit(f"{key} is not built yet; run: python -m idioms.models build {key}")
+            self.model, self.tokenizer = load(str(path))
+        else:
+            self.model, self.tokenizer = load(MODELS[key], revision=REVISIONS[key])
         self.settings = {"hf_id": MODELS[key], "revision": REVISIONS[key], "method": method,
+                         **({"local_build": build} if build else {}),
                          **({"max_tokens": max_tokens, "decoding": "greedy"} if method == "generate" else {})}
 
     def _prompt_ids(self, prompt):
@@ -120,3 +144,30 @@ def free_memory():
         mx.clear_cache()
     except (ImportError, AttributeError):
         pass
+
+
+def build_local(key):
+    """Download the pinned source checkpoint and convert it to a quantized MLX model."""
+    from mlx_lm import convert
+
+    if key not in LOCAL_BUILDS:
+        raise SystemExit(f"{key!r} has a ready-made build; nothing to convert. Local builds: {list(LOCAL_BUILDS)}")
+    build = LOCAL_BUILDS[key]
+    path = ROOT / build["path"]
+    if path.exists():
+        raise SystemExit(f"{path} already exists; delete it first to rebuild")
+    convert(MODELS[key], mlx_path=str(path), quantize=True, q_bits=build["q_bits"],
+            q_group_size=build["q_group_size"], revision=REVISIONS[key])
+    print(f"{key} built in {path}")
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="Build locally converted models.")
+    ap.add_argument("command", choices=["build"])
+    ap.add_argument("model", choices=list(LOCAL_BUILDS))
+    args = ap.parse_args(argv)
+    build_local(args.model)
+
+
+if __name__ == "__main__":
+    main()

@@ -17,7 +17,10 @@ No expression appears in both splits. Every expression currently includes a **mi
 |---|---|---|
 | `krikri` | [ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx](https://huggingface.co/ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx) | Llama-3.1-8B with continued pretraining on Greek (ILSP) |
 | `llama` | [mlx-community/Llama-3.1-8B-Instruct-4bit](https://huggingface.co/mlx-community/Llama-3.1-8B-Instruct-4bit) | the same base model without the Greek training |
+| `meltemi` | [ilsp/Meltemi-7B-Instruct-v1.5](https://huggingface.co/ilsp/Meltemi-7B-Instruct-v1.5), converted to 4-bit locally | Mistral-7B with continued pretraining on Greek (ILSP); candidate, not in the default model list |
 | `baseline` | — | always answers "idiomatic" |
+
+Meltemi has no ready-made 4-bit MLX build. Convert it once (downloads about 15 GB, writes about 4 GB to `local_models/`, which is not in git): `python -m idioms.models build meltemi`. Then pass it explicitly, e.g. `--models krikri llama meltemi`.
 
 These models provide a comparison between a Greek-adapted model and a related general model. It does not isolate a single training change: tokenization, instruction tuning, and quantized builds may also differ. Both use [mlx-lm](https://github.com/ml-explore/mlx-lm) on Apple Silicon, loaded at pinned checkpoint revisions. The main method compares the log-probabilities of the two answer words (`--method score`, default), so every example gets one of the two labels. Its raw log-probabilities are not calibrated confidence scores. Greedy generation (`--method generate`) is available as a separate setting, but in trials the models usually add an explanation after the label, which the strict parser counts as `unparsed` (see below).
 
@@ -29,7 +32,7 @@ All prompts are in `prompts/`. `{expression}` and `{passage}` are filled in, and
 |---|---|---|
 | `basic_en` / `basic_el` | English / Greek | literal vs. idiomatic, with a short definition of each |
 | `use_en` / `use_el` | English / Greek | says plainly to judge *this* use, not whether the phrase is an idiom in general |
-| `physical_el` | Greek | does the phrase describe something that really happens? |
+| `physical_en` / `physical_el` | English / Greek | short question after the passage: does the phrase describe something that really happens? |
 
 ## Setup
 

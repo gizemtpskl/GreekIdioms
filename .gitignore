@@ -5,3 +5,4 @@ __pycache__/
 .DS_Store
 results/**/*.lock
 *.log
+local_models/

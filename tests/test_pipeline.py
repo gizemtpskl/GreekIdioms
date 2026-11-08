@@ -2,9 +2,9 @@ import unittest
 
 from idioms.data import check, load_split, minimal_pairs
 from idioms.metrics import accuracy, cohen_kappa, macro_f1, mcnemar_exact
-from idioms.models import DEFAULT_METHOD, MODELS, REVISIONS, parse_answer
+from idioms.models import DEFAULT_METHOD, DEFAULT_MODELS, LOCAL_BUILDS, MODELS, REVISIONS, parse_answer
 from idioms.prompts import Template, passage, prompt_names
-from idioms.evaluate import context_effect, pair_accuracy
+from idioms.evaluate import context_effect, grid_rows, pair_accuracy
 
 EXAMPLE = {
     "id": "x-1", "expression_id": "e01", "expression": "σπάω τον πάγο",
@@ -54,6 +54,10 @@ class TestModels(unittest.TestCase):
         for revision in REVISIONS.values():
             self.assertRegex(revision, r"^[0-9a-f]{40}$")
 
+    def test_default_and_local_models_are_known(self):
+        self.assertTrue(set(DEFAULT_MODELS) <= set(MODELS))
+        self.assertTrue(set(LOCAL_BUILDS) <= set(MODELS))
+
     def test_score_is_the_main_method(self):
         self.assertEqual(DEFAULT_METHOD, "score")
 
@@ -91,6 +95,22 @@ class TestMetrics(unittest.TestCase):
         effect = context_effect(sentence, context)
         self.assertEqual((effect["fixed"], effect["broken"]), (["a"], ["c"]))
         self.assertEqual(pair_accuracy(context, [("a", "b"), ("c", "b")]), 0.5)
+
+
+class TestGrid(unittest.TestCase):
+    def test_grid_has_one_row_per_model_and_one_column_per_prompt(self):
+        def recs(*preds):
+            return [{"gold": g, "prediction": p} for g, p in zip(("literal", "idiomatic"), preds)]
+        runs = {("baseline", "a", "sentence"): recs("idiomatic", "idiomatic"),
+                ("baseline", "a", "context"): recs("idiomatic", "idiomatic"),
+                ("krikri", "a", "sentence"): recs("literal", "idiomatic"),
+                ("krikri", "b", "context"): recs("literal", "literal")}
+        prompts, rows = grid_rows(runs)
+        self.assertEqual(prompts, ["a", "b"])
+        self.assertEqual([r["model"] for r in rows], ["baseline", "krikri"])
+        self.assertEqual(rows[0]["b"], rows[0]["a"])  # baseline is the same under every prompt
+        self.assertEqual(rows[1]["a"], "1.00 / -")
+        self.assertEqual(rows[1]["b"], "- / 0.33")
 
 
 if __name__ == "__main__":

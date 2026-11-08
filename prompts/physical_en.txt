@@ -1,0 +1,3 @@
+{passage}
+
+In the sentence between the <target> tags, does the phrase between the <expr> tags describe something that really happens, or is it used figuratively? Answer with one word: literal or idiomatic.

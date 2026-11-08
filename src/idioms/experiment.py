@@ -24,7 +24,7 @@ from statistics import mean
 
 from .data import ROOT, load_split
 from .evaluate import SUMMARY_COLUMNS, fmt, print_details, print_table, summary_rows
-from .models import BASELINE, DEFAULT_METHOD, METHODS, MODELS, free_memory, load_model
+from .models import BASELINE, DEFAULT_METHOD, DEFAULT_MODELS, METHODS, MODELS, free_memory, load_model
 from .prompts import CONDITIONS, Template, prompt_names
 from .run import run
 from .provenance import PROTOCOL_VERSION, fingerprint, load_predictions, pipeline_fingerprint, runtime_versions
@@ -142,7 +142,7 @@ def main(argv=None):
     args.results_dir.mkdir(parents=True, exist_ok=True)
     try:
         if args.step == "dev":
-            dev(args.models or list(MODELS), args.method or DEFAULT_METHOD, args.prompts or prompt_names(), args.results_dir)
+            dev(args.models or list(DEFAULT_MODELS), args.method or DEFAULT_METHOD, args.prompts or prompt_names(), args.results_dir)
         else:
             test(args.models, args.results_dir)
     except (ValueError, OSError, RuntimeError) as exc:
