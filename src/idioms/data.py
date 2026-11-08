@@ -70,6 +70,51 @@ def check(examples):
         if (isinstance(ex.get("span"), str) and isinstance(ex.get("target_sentence"), str)
                 and ex["span"] not in ex["target_sentence"]):
             problems.append(f"{where}: span {ex.get('span')!r} is not in the target sentence")
+        problems.extend(check_review(ex))
+    return problems
+
+
+def check_review(ex):
+    """Validate independent judgments and their relationship to the evaluation label."""
+    fields = ("label_reviewer1", "label_reviewer2", "sentence_sufficient_reviewer1",
+              "sentence_sufficient_reviewer2", "reviewer2", "notes_reviewer2",
+              "review_status", "adjudicator", "adjudication_notes")
+    if not any(field in ex for field in fields):
+        return []
+    problems = []
+    where = ex.get("id", "?")
+    status = ex.get("review_status")
+    if status not in ("pending", "agreed", "adjudicated"):
+        problems.append(f"{where}: invalid or missing review_status")
+    for field in ("label_reviewer1", "label_reviewer2"):
+        if ex.get(field) not in ANNOTATION_LABELS:
+            problems.append(f"{where}: invalid or missing {field}")
+    for field in ("sentence_sufficient_reviewer1", "sentence_sufficient_reviewer2"):
+        if not isinstance(ex.get(field), bool):
+            problems.append(f"{where}: {field} must be true or false")
+    for field in ("annotator", "reviewer2"):
+        if not isinstance(ex.get(field), str) or not ex[field].strip():
+            problems.append(f"{where}: reviewed example requires {field}")
+    if (isinstance(ex.get("annotator"), str) and isinstance(ex.get("reviewer2"), str)
+            and ex["annotator"].strip() == ex["reviewer2"].strip()):
+        problems.append(f"{where}: the second reviewer must be a different person")
+    notes = ex.get("notes_reviewer2")
+    if not isinstance(notes, str) or (ex.get("label_reviewer2") == "ambiguous" and not notes.strip()):
+        problems.append(f"{where}: notes_reviewer2 must be text and explain an ambiguous label")
+    disagrees = (ex.get("label_reviewer1") != ex.get("label_reviewer2") or
+                 ex.get("sentence_sufficient_reviewer1") != ex.get("sentence_sufficient_reviewer2"))
+    if status == "agreed" and disagrees:
+        problems.append(f"{where}: agreed review contains a disagreement")
+    if status == "pending" and not disagrees:
+        problems.append(f"{where}: pending review requires a disagreement")
+    if status in ("pending", "agreed"):
+        if (ex.get("label") != ex.get("label_reviewer1") or
+                ex.get("sentence_sufficient") != ex.get("sentence_sufficient_reviewer1")):
+            problems.append(f"{where}: evaluation fields changed before adjudication")
+    if status == "adjudicated":
+        for field in ("adjudicator", "adjudication_notes"):
+            if not isinstance(ex.get(field), str) or not ex[field].strip():
+                problems.append(f"{where}: adjudication requires {field}")
     return problems
 
 
