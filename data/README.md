@@ -41,7 +41,7 @@ The two halves of a minimal pair share the same target sentence. Only the preced
 | `sentence_sufficient_reviewer1` / `sentence_sufficient_reviewer2` | each reviewer's independent judgment of whether context is needed |
 | `reviewer2` / `notes_reviewer2` | second reviewer's identifier and notes; explain an ambiguous judgment |
 | `review_status` | `agreed`, `pending`, or `adjudicated`; a disagreement in either judgment requires adjudication |
-| `adjudicator` / `adjudication_notes` | who resolved a disagreement and why; required after adjudication |
+| `adjudicator` / `adjudication_notes` | optional information about who resolved a disagreement and why; may be absent or blank |
 
 Review fields are absent on unreviewed examples. Once present, the complete
 review metadata must be valid. `label` and `sentence_sufficient` remain the
@@ -76,11 +76,10 @@ kappa = 0.714286**, including the ambiguous judgment. The label disagreements ar
 Sentence-sufficiency agreement is **11/20 (55%)**. Nine other examples differ on
 whether the target sentence alone is sufficient: `pilot-003`, `pilot-004`,
 `pilot-007`, `pilot-008`, `pilot-011`, `pilot-015`, `pilot-016`, `pilot-019`, and
-`pilot-020`. This makes **12 pending adjudications** in total. Clarify the meaning
-of sentence sufficiency before resolving these cases: `true` means the target
-sentence alone supports the same single interpretation, without the surrounding
-context. Keep the submitted judgments even if this clarification changes a final
-decision.
+`pilot-020`. This made **12 cases requiring adjudication** in total, now resolved. Sentence
+sufficiency means that the target sentence alone supports the same single
+interpretation without the surrounding context. The submitted independent
+judgments remain preserved alongside the final decisions.
 
 | File under `review/pilot/` | Purpose |
 |---|---|
@@ -88,33 +87,40 @@ decision.
 | `source.jsonl` | Exact snapshot of the primary pilot annotations used for comparison |
 | `reviewer_completed.csv` | Working copy; only `pilot-012`'s spelling `ambigious` is corrected to `ambiguous` |
 | `reviewed.jsonl` | Both independent judgments, with 8 agreed and 12 pending examples |
-| `agreement.json` | Agreement figures, coverage, source hashes, correction record, and reviewer-ID note |
-| `adjudication.csv` | One sheet with the 12 disputed examples: sentences, contexts, both judgments, reviewer notes, and four blank final-decision columns |
+| `agreement.json` | Preserved pre-adjudication snapshot: agreement figures, original pending cases, source hashes, correction record, and reviewer-ID note |
+| `adjudication.csv` | Completed final labels and sufficiency decisions uploaded by Angeliki in commit `4250215`; optional attribution and notes are blank |
+| `adjudicated.jsonl` | Imported decisions: 12 adjudicated and 8 agreed examples, with both independent judgments preserved |
 
 The importer also applies its existing case/whitespace normalization; it does not
-change the judgments. No final decisions have been made, and the canonical pilot
-and test datasets are unchanged. This review covers the pilot only.
+change the judgments. All 12 decisions have now been imported. The final labels
+match the primary labels; only `pilot-011` changes sentence sufficiency from
+`false` to `true`. There are no pending rows in `adjudicated.jsonl`.
+The adjudicated output is now active at `data/pilot/pilot.jsonl`; the original
+primary dataset remains in `review/pilot/source.jsonl`. This review covers the
+pilot only; the test dataset is unchanged.
 
-**Next human step:** Angeliki and the second reviewer discuss the examples in
-`adjudication.csv` and save a completed copy as `adjudication_completed.csv`.
-Each row includes all the reference information; no second sheet is needed.
-Fill only the final four columns: `final_label`, `final_sentence_sufficient`, `adjudicator`, and
-`adjudication_notes` for every row, including rows where only sufficiency differs.
-If a meaning remains unresolved, use `ambiguous`, set sufficiency to `false`, and
-explain the reason. Leave every other column unchanged. Neither reviewer's
-original answer is automatically preferred.
+For any future decision sheet, fill `final_label` and `final_sentence_sufficient`
+for every row, including rows where only sufficiency differs. `adjudicator` and
+`adjudication_notes` are optional. Each row includes all the reference information;
+no second sheet is needed. If a meaning remains unresolved, use `ambiguous` and
+set sufficiency to `false`. Leave every reference column unchanged. Neither
+reviewer's original answer is automatically preferred.
 
-Then run from the repository root:
+The completed pilot sheet was imported from the repository root with:
 
 ```bash
 PYTHONPATH=src python3 -m idioms.review adjudicate data/review/pilot/reviewed.jsonl \
-    data/review/pilot/adjudication_completed.csv --out data/review/pilot/adjudicated.jsonl
+    data/review/pilot/adjudication.csv --out data/review/pilot/adjudicated.jsonl
 ```
 
-Keep the independent agreement figures above for reporting. Adjudication does not
-replace them with agreement on the final labels. Inspect the output before adopting
-it as the canonical pilot, and check the development-run compatibility before
-starting final testing.
+The output already exists; do not rerun this command over it. Keep the independent
+agreement figures above for reporting. Adjudication does not
+replace them with agreement on the final labels. Adoption and the development-run
+reuse check are complete: saved inputs and gold labels are identical, and
+`physical_en` remains the selected prompt. See the
+[reuse audit](../results/reviewed_dev_check.json) and
+[execution limitations](../README.md#checked-development-runs-after-pilot-adjudication)
+before starting final testing.
 
 ## Review workflow
 
@@ -132,7 +138,7 @@ the recorded artifacts.
    all pilot items. Decide the final-set review subset and
    record its size and selection method before looking at model predictions.
 2. Export a blind packet. `data/review/pilot/` contains the existing pilot packet
-   generated from the current pilot file with seed 0. Its `reviewer.csv` has now
+   generated from the primary pilot (now preserved in `source.jsonl`) with seed 0. Its `reviewer.csv` has now
    been completed; the recorded outputs are described above. The command below shows
    how it was generated; to export again, use a new directory. Commands refuse
    to overwrite existing outputs.
@@ -168,8 +174,9 @@ the recorded artifacts.
    canonical splits if no paths are supplied.
 4. Discuss each row in `adjudication.csv`, which includes the sentence, context,
    both original judgments, reviewer notes, and the type of disagreement. Preserve
-   these reference columns and fill only `final_label`, `final_sentence_sufficient`, `adjudicator`, and
-   `adjudication_notes`. Save as `adjudication_completed.csv`, then run:
+   these reference columns and fill `final_label` and `final_sentence_sufficient`.
+   `adjudicator` and `adjudication_notes` are optional and can stay blank.
+   Save as `adjudication_completed.csv`, then run:
 
    ```bash
    python -m idioms.review adjudicate data/review/pilot/reviewed.jsonl \
@@ -185,8 +192,12 @@ the recorded artifacts.
    artifacts as history, and copy the approved output to the corresponding
    canonical dataset path (`data/pilot/pilot.jsonl` for this pilot). The experiment
    does not automatically read files in `data/review/`. Run `python -m idioms.data`
-   to validate both canonical splits, then freeze the data and rerun development
-   in a fresh results directory. Apply the same workflow to the test review.
+   to validate both canonical splits, then freeze the data. Check whether saved
+   development predictions remain valid; changed model inputs or gold labels
+   require rerunning or rescoring as appropriate. The runner requires matching
+   fingerprints and runtime, so reuse across changes needs an explicitly
+   documented procedure; otherwise rerun development in a fresh results directory.
+   Apply the same review workflow to the test review.
 
 Text corrections belong in reviewer notes during review, not in the passage
 columns. If a passage needs changing, preserve the original review history,

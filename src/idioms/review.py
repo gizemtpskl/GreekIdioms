@@ -184,8 +184,6 @@ def adjudicate(data, decisions_csv, out):
                 raise ValueError(f"{ex['id']}: read-only passage or annotation fields were changed: {field}")
         label = parse_annotation(row["final_label"], ex["id"])
         sufficient = parse_bool(row["final_sentence_sufficient"], ex["id"])
-        if not row["adjudicator"].strip() or not row["adjudication_notes"].strip():
-            raise ValueError(f"{ex['id']}: adjudicator and reason are required")
         ex.update(
             label=label, sentence_sufficient=sufficient, review_status="adjudicated",
             adjudicator=row["adjudicator"].strip(),

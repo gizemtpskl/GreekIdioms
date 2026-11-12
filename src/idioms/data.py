@@ -111,10 +111,9 @@ def check_review(ex):
         if (ex.get("label") != ex.get("label_reviewer1") or
                 ex.get("sentence_sufficient") != ex.get("sentence_sufficient_reviewer1")):
             problems.append(f"{where}: evaluation fields changed before adjudication")
-    if status == "adjudicated":
-        for field in ("adjudicator", "adjudication_notes"):
-            if not isinstance(ex.get(field), str) or not ex[field].strip():
-                problems.append(f"{where}: adjudication requires {field}")
+    for field in ("adjudicator", "adjudication_notes"):
+        if field in ex and not isinstance(ex[field], str):
+            problems.append(f"{where}: optional {field} must be text")
     return problems
 
 

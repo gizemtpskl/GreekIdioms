@@ -40,7 +40,8 @@ class TestRunSafety(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        self.examples = data.load_split("dev")[:2]
+        # These tests vary labels before review to exercise run identity checks.
+        self.examples = data.read_jsonl(data.ROOT / "data/review/pilot/source.jsonl")[:2]
         self.template = Template("basic_en")
 
     def execute(self, model=None, examples=None, template=None, condition="sentence", directory=None):
@@ -192,6 +193,7 @@ class TestReviewRegressions(unittest.TestCase):
 
     def test_ambiguous_examples_are_retained_but_excluded_from_inference(self):
         original = {name: data.read_jsonl(path) for name, path in data.SPLITS.items()}
+        original["dev"] = data.read_jsonl(data.ROOT / "data/review/pilot/source.jsonl")
         original["dev"][0]["label"] = "ambiguous"
         self.assertEqual(data.check(original["dev"]), [])
         with tempfile.TemporaryDirectory() as folder:

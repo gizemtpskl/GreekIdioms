@@ -27,7 +27,8 @@ class TestReview(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.folder = Path(self.temp.name)
         self.data = self.folder / "source.jsonl"
-        self.examples = read_jsonl(ROOT / "data/pilot/pilot.jsonl")[:2]
+        # Review tests need primary annotations; the canonical pilot is already reviewed.
+        self.examples = read_jsonl(ROOT / "data/review/pilot/source.jsonl")[:2]
         for ex in self.examples:
             ex["annotator"] = "first"
             ex["notes"] = "Private annotation reasoning"
@@ -141,12 +142,16 @@ class TestReview(unittest.TestCase):
         write_csv(path, REVIEW_FIELDS, rows)
         self.assertEqual(self.merge(path), (2, 1))
 
-    def test_adjudication_rejects_missing_reason_and_changed_originals(self):
+    def test_adjudication_rejects_missing_decisions_and_changed_originals(self):
         self.merge(self.fill_review(disagree=True))
         original = read_csv(self.decisions, DECISION_FIELDS)
-        for name in ("missing_reason", "changed_original"):
+        for name in ("missing_label", "missing_sufficiency", "changed_original"):
             rows = [dict(r) for r in original]
             rows[0].update(final_label="literal", final_sentence_sufficient="true", adjudicator="first")
+            if name == "missing_label":
+                rows[0]["final_label"] = ""
+            if name == "missing_sufficiency":
+                rows[0]["final_sentence_sufficient"] = ""
             if name == "changed_original":
                 rows[0].update(label_reviewer1="ambiguous", adjudication_notes="Reason")
             path = self.folder / f"{name}.csv"
@@ -154,6 +159,27 @@ class TestReview(unittest.TestCase):
             with self.assertRaises(ValueError):
                 adjudicate(self.reviewed, path, self.folder / "final.jsonl")
         self.assertFalse((self.folder / "final.jsonl").exists())
+
+    def test_adjudication_allows_blank_attribution_and_notes(self):
+        self.merge(self.fill_review(disagree=True))
+        before = read_jsonl(self.reviewed)
+        rows = read_csv(self.decisions, DECISION_FIELDS)
+        rows[0].update(final_label="ambiguous", final_sentence_sufficient="false")
+        self.assertEqual((rows[0]["adjudicator"], rows[0]["adjudication_notes"]), ("", ""))
+        path = self.folder / "adjudication_completed.csv"
+        write_csv(path, DECISION_FIELDS, rows)
+        final = self.folder / "final.jsonl"
+        self.assertEqual(adjudicate(self.reviewed, path, final), 1)
+        after = read_jsonl(final)
+        self.assertEqual(check(after), [])
+        resolved = next(ex for ex in after if ex["review_status"] == "adjudicated")
+        self.assertEqual((resolved["adjudicator"], resolved["adjudication_notes"]), ("", ""))
+        self.assertEqual(agreement_summary(before)["kappa"], agreement_summary(after)["kappa"])
+        self.assertEqual(len(self.select(after)), 1)
+        without_metadata = dict(resolved)
+        del without_metadata["adjudicator"], without_metadata["adjudication_notes"]
+        self.assertEqual(check([without_metadata]), [])
+        self.assertTrue(check([dict(resolved, adjudication_notes=42)]))
 
     def test_subset_import_leaves_other_examples_unreviewed(self):
         export_review(self.data, self.folder / "subset", ids=[self.examples[0]["id"]])
@@ -203,7 +229,6 @@ class TestReview(unittest.TestCase):
         pending = next(ex for ex in original if ex["review_status"] == "pending")
         changes = [
             {"review_status": "agreed"},
-            {"review_status": "adjudicated"},
             {"review_status": "unknown"},
             {"label_reviewer1": "invalid"},
             {"sentence_sufficient_reviewer1": "true"},

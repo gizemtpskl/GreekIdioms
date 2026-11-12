@@ -1,0 +1,499 @@
+{
+  "purpose": "Audit reuse of saved development predictions after pilot adjudication; no new inference.",
+  "active_pilot": "data/pilot/pilot.jsonl",
+  "original_pilot": "data/review/pilot/source.jsonl",
+  "original_data_hash": "0fea5bab1b8aff9ff3d16b4b8ea1fcd6b49b67f1af7bb086b6973254d4d56154",
+  "active_data_hash": "93d4a05ea1bbdeb0bfd68206ae687f4240ccdbd5a0ecef8e3afbe008b436607c",
+  "current_pipeline_hash": "c8d5224488d78d4e60dbcc182de05812062b18436752405fdfaa1bc8f81a1ee5",
+  "audit_runtime": {
+    "python": "3.12.8",
+    "platform": "macOS-15.1-arm64-arm-64bit",
+    "mlx-lm": null,
+    "mlx": null,
+    "transformers": "4.57.1",
+    "tokenizers": "0.22.1",
+    "huggingface-hub": "0.36.0"
+  },
+  "changes_to_existing_fields": [
+    {
+      "id": "pilot-011",
+      "field": "sentence_sufficient",
+      "before": false,
+      "after": true
+    }
+  ],
+  "added_review_metadata": [
+    "adjudication_notes",
+    "adjudicator",
+    "label_reviewer1",
+    "label_reviewer2",
+    "notes_reviewer2",
+    "review_status",
+    "reviewer2",
+    "sentence_sufficient_reviewer1",
+    "sentence_sufficient_reviewer2"
+  ],
+  "sentence_sufficient_counts": {
+    "original": 10,
+    "active": 11
+  },
+  "datasets": [
+    {
+      "directory": "results/practice",
+      "historical_pipeline_commit": "146a704d2ad061124b2cb9ecec1b582ec139ce08",
+      "pipeline_hash": "f3cf3ae3efdba26224474e2fe2b15a5dac46829165eaec8d70e8f54bee74f6a9",
+      "runtime": {
+        "python": "3.14.5",
+        "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+        "mlx-lm": "0.32.0",
+        "mlx": "0.32.3",
+        "transformers": "5.18.0",
+        "tokenizers": "0.23.2",
+        "huggingface-hub": "1.33.0"
+      },
+      "unchanged_pipeline_files": [
+        "prompts.py",
+        "run.py",
+        "provenance.py"
+      ],
+      "unchanged_model_methods": [
+        "_prompt_ids",
+        "predict",
+        "_logprob"
+      ],
+      "validated_runs": 26,
+      "validated_predictions": 520,
+      "selected_prompt": "physical_en",
+      "method": "score",
+      "models": [
+        "krikri",
+        "llama"
+      ],
+      "model_settings": {
+        "krikri": {
+          "hf_id": "ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx",
+          "revision": "140ab6af4203751d7f91896e6d534f11a1e1863d",
+          "method": "score"
+        },
+        "llama": {
+          "hf_id": "mlx-community/Llama-3.1-8B-Instruct-4bit",
+          "revision": "90215b22ec18e72f623dde2ea7af4097025160e2",
+          "method": "score"
+        }
+      },
+      "ranking": [
+        {
+          "prompt": "physical_en",
+          "mean_macro_f1": 0.5656565656565656
+        },
+        {
+          "prompt": "physical_el",
+          "mean_macro_f1": 0.5620464505162781
+        },
+        {
+          "prompt": "use_en",
+          "mean_macro_f1": 0.5364456145706146
+        },
+        {
+          "prompt": "basic_en",
+          "mean_macro_f1": 0.39739570774053534
+        },
+        {
+          "prompt": "basic_el",
+          "mean_macro_f1": 0.35893416927899685
+        },
+        {
+          "prompt": "use_el",
+          "mean_macro_f1": 0.35893416927899685
+        }
+      ],
+      "selected_prompt_summary": [
+        {
+          "model": "baseline",
+          "prompt": "basic_el",
+          "condition": "context",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "baseline",
+          "prompt": "basic_el",
+          "condition": "sentence",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "krikri-score",
+          "prompt": "physical_en",
+          "condition": "context",
+          "accuracy": 0.9,
+          "macro_f1": 0.898989898989899,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.8888888888888888
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.9090909090909091
+            }
+          }
+        },
+        {
+          "model": "krikri-score",
+          "prompt": "physical_en",
+          "condition": "sentence",
+          "accuracy": 0.7,
+          "macro_f1": 0.696969696969697,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.9090909090909091
+            }
+          }
+        },
+        {
+          "model": "llama-score",
+          "prompt": "physical_en",
+          "condition": "context",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "llama-score",
+          "prompt": "physical_en",
+          "condition": "sentence",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        }
+      ],
+      "source_file_sha256": {
+        "results/practice/chosen_prompt.json": "d19eeafaa5f9ffa06526b4f09edd900eda0659c709755c76337474ba2084e7f9",
+        "results/practice/dev_summary.csv": "027de3d53cb5e572d1286c5ae13fcff07474122935d020aad511e1bf951cf4e9",
+        "results/practice/predictions/dev__baseline__basic_el__context.jsonl": "e6e28d94e8828eeae92c19a412020167bda0b1ae183b0404880ded3886e4846d",
+        "results/practice/predictions/dev__baseline__basic_el__context.manifest.json": "ee90836583ba6872796650b2aabc7e6668e7650537cf139ad4bbad679b3ee9dc",
+        "results/practice/predictions/dev__baseline__basic_el__sentence.jsonl": "81d88f6c43db5919eab3d9f7234b0ce682b78b611e8e25d8b881a2cec9be9691",
+        "results/practice/predictions/dev__baseline__basic_el__sentence.manifest.json": "783f370af4d43822ab3ea641afbbb50de6e1251df33128feb4aea45bfa15de18",
+        "results/practice/predictions/dev__krikri-score__basic_el__context.jsonl": "d0a45584f7c5ef174a190a7e74b83141460d7d148a5655fe9dbf3c22d9feadbc",
+        "results/practice/predictions/dev__krikri-score__basic_el__context.manifest.json": "256684688966f9d2de59b0218ff3b624eb293d656490b9e30d6f4e4a03df028f",
+        "results/practice/predictions/dev__krikri-score__basic_el__sentence.jsonl": "d02a24edba78f5b97a920ab60bfd87d9edd02aa0a305f18cc9920dd8470eafdd",
+        "results/practice/predictions/dev__krikri-score__basic_el__sentence.manifest.json": "a5f57dd2767a270706d66a1e077f97149ba49cb78428cf21a6b3297bc3642d25",
+        "results/practice/predictions/dev__krikri-score__basic_en__context.jsonl": "f6d1be5b9a82a64b4d3d2c366b5e8ea99dad32c4154b04a943e5cb5d9bd9dcb7",
+        "results/practice/predictions/dev__krikri-score__basic_en__context.manifest.json": "3c888877529d9e2ce309e6dd71bad3bc817e8e28eee8f9a28aba80cabb13b223",
+        "results/practice/predictions/dev__krikri-score__basic_en__sentence.jsonl": "04319b97f6df13f7d5ae1933cc2f3c6afc0ba99334ed85b9f11878be1c15337b",
+        "results/practice/predictions/dev__krikri-score__basic_en__sentence.manifest.json": "4520bef49810cd5d898966640e1dac0590479994d6caa6793ed7df1649943d5a",
+        "results/practice/predictions/dev__krikri-score__physical_el__context.jsonl": "90153a119ce7e3bc733dea09f1de6e0f48248d4bf5edb555f953454184dd5192",
+        "results/practice/predictions/dev__krikri-score__physical_el__context.manifest.json": "08493902483c0454a3aef482f0ea3d43ffba3af6e31c683d9b5a9ab82997f8b6",
+        "results/practice/predictions/dev__krikri-score__physical_el__sentence.jsonl": "2a971f1a06d95a4350dba7f0f3ba6743424fe61c84c6343de1741c04be90fa2f",
+        "results/practice/predictions/dev__krikri-score__physical_el__sentence.manifest.json": "1d1ff71385b578b55bdd7cb6feef5116163698c092ed60c5eedad1f0fa0c1675",
+        "results/practice/predictions/dev__krikri-score__physical_en__context.jsonl": "935ebdd4d0d6f45deec091c9690dd63d61435c6cbe60c443089c7120e6041ef6",
+        "results/practice/predictions/dev__krikri-score__physical_en__context.manifest.json": "1929820c8140d6fcd2f1da55592eb184e589b2740fe4ebf7d32d50ee9ebb4a5c",
+        "results/practice/predictions/dev__krikri-score__physical_en__sentence.jsonl": "9ef2c21835d663ff3575ac93eab58fb382b53ed86c79259f397b2ab37c5e3d29",
+        "results/practice/predictions/dev__krikri-score__physical_en__sentence.manifest.json": "6b8fcaf42229df6dfcec507aaf4be5e585dcc0a525c8fdead6f7692b8578ba41",
+        "results/practice/predictions/dev__krikri-score__use_el__context.jsonl": "8d266baf47cdbcd1c77ccb3d4193ddc06948d14da95d64d0944ab849ff9bc6b5",
+        "results/practice/predictions/dev__krikri-score__use_el__context.manifest.json": "7cc5bbeb564521dad3e9dd66697547cc8e702f07534ab3b93eefa2e42d9b41f2",
+        "results/practice/predictions/dev__krikri-score__use_el__sentence.jsonl": "8e276284b85d68d3c5ea26c9ca1bf8ce286c0d3824e17e71e56858d333a460f6",
+        "results/practice/predictions/dev__krikri-score__use_el__sentence.manifest.json": "fa7ba7f73119a2401a2bc6809faf64aa512da79e886e94409883c0d3e5d21cf8",
+        "results/practice/predictions/dev__krikri-score__use_en__context.jsonl": "d623a5e4739dc0ab1832853fe6dd145f2ecb24ad634729ccb4ce3a61ca6a69e7",
+        "results/practice/predictions/dev__krikri-score__use_en__context.manifest.json": "02b14dc1c31227037855943288bad07de92c461430b09c8c9bc4f77e097ec4ca",
+        "results/practice/predictions/dev__krikri-score__use_en__sentence.jsonl": "8faf9f35f4d9744e7fe928990058e758c44d2d90c2173d22a823b0d192e1f3ce",
+        "results/practice/predictions/dev__krikri-score__use_en__sentence.manifest.json": "be5fd0f1561a6fdd84733728d5ddad444ec9e70c6c3c70f831db641a307d3587",
+        "results/practice/predictions/dev__llama-score__basic_el__context.jsonl": "297d547d8dcffb24205e7476f7cfb2393a643fbfb530a2e01bedb32b4ee8396f",
+        "results/practice/predictions/dev__llama-score__basic_el__context.manifest.json": "2915fb16a018a580a6fc00c6fac0d450295db575f9c83f2db9ef8a035f9a0049",
+        "results/practice/predictions/dev__llama-score__basic_el__sentence.jsonl": "dade01424968adb88bb7ff302c232f793f397cad2121d76a698b24fb7890f205",
+        "results/practice/predictions/dev__llama-score__basic_el__sentence.manifest.json": "67ddf0bef15b64e527da00d7581ce644f55d0d198d792aba16f538bf4f634761",
+        "results/practice/predictions/dev__llama-score__basic_en__context.jsonl": "9b418d7c6df3a7590e7858a1b09f342902dbded3e7776a2b5ef954bfbdff0ec7",
+        "results/practice/predictions/dev__llama-score__basic_en__context.manifest.json": "586923f81db2e2c78abde857e959907314c6ea1142b8ccdb909d033f2c9bfaa4",
+        "results/practice/predictions/dev__llama-score__basic_en__sentence.jsonl": "2f446118730e54010e368301731fd169a20593ccab684685c57a9551ebf41b30",
+        "results/practice/predictions/dev__llama-score__basic_en__sentence.manifest.json": "fc4a7bc6dde3d7cf04ac07565c3b8f82fb739bc296f4d3d1f056565ec11f9955",
+        "results/practice/predictions/dev__llama-score__physical_el__context.jsonl": "30560f68dd17c4167b38540f0647f8bf273ed586e85c47564c6ccc4b9b6e4fc6",
+        "results/practice/predictions/dev__llama-score__physical_el__context.manifest.json": "2f33a4a905595b26ceedb831dca75d53cfd9008bf2c4d0f489744c7a4d1fb0af",
+        "results/practice/predictions/dev__llama-score__physical_el__sentence.jsonl": "f886e54afd6f97d5bb1c868fa8e825c76e84da8ac0489b75a63118a3bb64483e",
+        "results/practice/predictions/dev__llama-score__physical_el__sentence.manifest.json": "a16e8eab484868548057d499c58e8b194787d89fd98ce77766929f3ef2bb1b1c",
+        "results/practice/predictions/dev__llama-score__physical_en__context.jsonl": "d33ddffe4da93af91a533ab3474ca17878fc6206aacaf7810f4b00a8383b326b",
+        "results/practice/predictions/dev__llama-score__physical_en__context.manifest.json": "841d3b114950cc2664287359fea0a991741093d545e7d35790a575bd66569da9",
+        "results/practice/predictions/dev__llama-score__physical_en__sentence.jsonl": "2fbb68d0ac327233a2423bdf1cfbea187135018b97864e88eb66fc90271d9ada",
+        "results/practice/predictions/dev__llama-score__physical_en__sentence.manifest.json": "ff7b17180cb771232b013e07a3a3fa7d0c2a6f91ec617041dee334d7aa3843b9",
+        "results/practice/predictions/dev__llama-score__use_el__context.jsonl": "70757675b92d5591c9cf5d100a7e30562c646878b80e5afa4843d07388d0921b",
+        "results/practice/predictions/dev__llama-score__use_el__context.manifest.json": "dca211385693c8e7adcdaa79db0c160b4fedfa7cb624676aab3022a967427c56",
+        "results/practice/predictions/dev__llama-score__use_el__sentence.jsonl": "bfa7c419f2af907964adefe484ad5f08a461ef4cbe867ecf57ef1df7215ff299",
+        "results/practice/predictions/dev__llama-score__use_el__sentence.manifest.json": "753415518647b1aba8fa71b5cefa1365396db3ef51a7807dcdc2dabebe49a94c",
+        "results/practice/predictions/dev__llama-score__use_en__context.jsonl": "49ada71743cd8faade3fa518abd28a2bc5ca8c1d8a27182250c9b3681c22c6ef",
+        "results/practice/predictions/dev__llama-score__use_en__context.manifest.json": "7fc7f72390d747e25ee1092561bb4452c7ffc27859701107841b495e4fa639b8",
+        "results/practice/predictions/dev__llama-score__use_en__sentence.jsonl": "a11dd8bd9879817c3bd0773c727898a8c87ceaefb88ec8359f7d110e7f18578b",
+        "results/practice/predictions/dev__llama-score__use_en__sentence.manifest.json": "c17f59918f2c4374e6f1913a594a54634d020e9e0799f722edf9dd1746d4865a"
+      }
+    },
+    {
+      "directory": "results/practice_models",
+      "historical_pipeline_commit": "7432f7c1312ec60a9066801d975e98f7a60777f6",
+      "pipeline_hash": "e9b5b52b2a658565c59003bbda56dc757a289a17d14a1024bcf89eb92bfd9732",
+      "runtime": {
+        "python": "3.14.5",
+        "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+        "mlx-lm": "0.32.0",
+        "mlx": "0.32.3",
+        "transformers": "5.18.0",
+        "tokenizers": "0.23.2",
+        "huggingface-hub": "1.33.0"
+      },
+      "unchanged_pipeline_files": [
+        "models.py",
+        "prompts.py",
+        "run.py",
+        "provenance.py"
+      ],
+      "unchanged_model_methods": [
+        "_prompt_ids",
+        "predict",
+        "_logprob"
+      ],
+      "validated_runs": 8,
+      "validated_predictions": 160,
+      "selected_prompt": "physical_en",
+      "method": "score",
+      "models": [
+        "krikri",
+        "llama",
+        "meltemi"
+      ],
+      "model_settings": {
+        "krikri": {
+          "hf_id": "ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx",
+          "revision": "140ab6af4203751d7f91896e6d534f11a1e1863d",
+          "method": "score"
+        },
+        "llama": {
+          "hf_id": "mlx-community/Llama-3.1-8B-Instruct-4bit",
+          "revision": "90215b22ec18e72f623dde2ea7af4097025160e2",
+          "method": "score"
+        },
+        "meltemi": {
+          "hf_id": "ilsp/Meltemi-7B-Instruct-v1.5",
+          "revision": "77d7fa68ee9f9c0addf6ed93acdc32ebafde9394",
+          "method": "score",
+          "local_build": {
+            "path": "local_models/Meltemi-7B-Instruct-v1.5-4bit",
+            "q_bits": 4,
+            "q_group_size": 64
+          }
+        }
+      },
+      "ranking": [
+        {
+          "prompt": "physical_en",
+          "mean_macro_f1": 0.48821548821548816
+        }
+      ],
+      "selected_prompt_summary": [
+        {
+          "model": "baseline",
+          "prompt": "physical_en",
+          "condition": "context",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "baseline",
+          "prompt": "physical_en",
+          "condition": "sentence",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "krikri-score",
+          "prompt": "physical_en",
+          "condition": "context",
+          "accuracy": 0.9,
+          "macro_f1": 0.898989898989899,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.8888888888888888
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.9090909090909091
+            }
+          }
+        },
+        {
+          "model": "krikri-score",
+          "prompt": "physical_en",
+          "condition": "sentence",
+          "accuracy": 0.7,
+          "macro_f1": 0.696969696969697,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.9090909090909091
+            }
+          }
+        },
+        {
+          "model": "llama-score",
+          "prompt": "physical_en",
+          "condition": "context",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "llama-score",
+          "prompt": "physical_en",
+          "condition": "sentence",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.4444444444444444
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.5454545454545454
+            }
+          }
+        },
+        {
+          "model": "meltemi-score",
+          "prompt": "physical_en",
+          "condition": "context",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.5555555555555556
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.45454545454545453
+            }
+          }
+        },
+        {
+          "model": "meltemi-score",
+          "prompt": "physical_en",
+          "condition": "sentence",
+          "accuracy": 0.5,
+          "macro_f1": 0.3333333333333333,
+          "adjudicated_sentence_sufficiency_groups": {
+            "false": {
+              "n": 9,
+              "accuracy": 0.5555555555555556
+            },
+            "true": {
+              "n": 11,
+              "accuracy": 0.45454545454545453
+            }
+          }
+        }
+      ],
+      "source_file_sha256": {
+        "results/practice_models/chosen_prompt.json": "a107400cc29a7080a57dc0caba1a25e9250b849149ed9549883ae700743d82f3",
+        "results/practice_models/dev_summary.csv": "106a06ab10ae4b856b1f5524546ff5cae3fa236edd486135eebea5e7618f4473",
+        "results/practice_models/predictions/dev__baseline__physical_en__context.jsonl": "5c9568cb44175be47428a8575d1a86d5195616126ca8235c912e053fbc16d3e1",
+        "results/practice_models/predictions/dev__baseline__physical_en__context.manifest.json": "24a6075ec3a0df7b53e14a3398bc9ccfa78f8308dae19fbebb5085c6af326463",
+        "results/practice_models/predictions/dev__baseline__physical_en__sentence.jsonl": "b902acfd76dcb8fbfb5eb1ef21d91c5962217b0bb3e9165d496a3f45f0dc6556",
+        "results/practice_models/predictions/dev__baseline__physical_en__sentence.manifest.json": "46283affd1e9abdea3ebf189c6f975f81effcb0b0eb6ac1abc69920aa40e9093",
+        "results/practice_models/predictions/dev__krikri-score__physical_en__context.jsonl": "543624552a073c905d6e437bebc64d49f4ed16215dea1a40fe1a06a65c23a1a1",
+        "results/practice_models/predictions/dev__krikri-score__physical_en__context.manifest.json": "e81cfa08e6605cccd82a5acb7cd87002014c789039d29a8ad52a32617a33d748",
+        "results/practice_models/predictions/dev__krikri-score__physical_en__sentence.jsonl": "9ca0948254bafdaf5a96d60125bfd986be5a242e27b7ba4ca8eb14dd5f620a58",
+        "results/practice_models/predictions/dev__krikri-score__physical_en__sentence.manifest.json": "be4a4bffc831b8f0787edb2425dbc24fd1541a1ad81194d872c9ae9e5b9bc0fe",
+        "results/practice_models/predictions/dev__llama-score__physical_en__context.jsonl": "7662247f4e807880bfef54af1d208b419538ce608c7900a61d0305c3debb71bc",
+        "results/practice_models/predictions/dev__llama-score__physical_en__context.manifest.json": "5d328ea21cb0e75105dd39fbde6c964733c9a8af7da6afbc1adc14568a8c9c1b",
+        "results/practice_models/predictions/dev__llama-score__physical_en__sentence.jsonl": "588256e01de007e3ca56e56d2b93860d67cb829f11b926be957b9a58b443616b",
+        "results/practice_models/predictions/dev__llama-score__physical_en__sentence.manifest.json": "ec8228345df87b2165772e7b1fcdcf2e89af758c9d3554995abd42b126d66519",
+        "results/practice_models/predictions/dev__meltemi-score__physical_en__context.jsonl": "3e902c626147e8b2f020dff0dd708fd9ca6d5f916491aa1b3254bc98b7429d70",
+        "results/practice_models/predictions/dev__meltemi-score__physical_en__context.manifest.json": "c10dd6363f19a8edc739a3a54617c71e18a3b49be11026a854f1b8b5e7896f37",
+        "results/practice_models/predictions/dev__meltemi-score__physical_en__sentence.jsonl": "878b121376ec5e658c7e624bb6ed54bc1c882a6a4b43239d50bc036e563b0e90",
+        "results/practice_models/predictions/dev__meltemi-score__physical_en__sentence.manifest.json": "6643a31cf2b48b92ec97a278b1c26697f6da606337b068cab924a97299b22ab8"
+      }
+    }
+  ],
+  "conclusion": "Saved predictions and overall prompt ranking remain usable: all gold labels and rendered model inputs are identical. Sentence-sufficiency subgroup analysis must use the adjudicated grouping.",
+  "test_run_readiness": "The existing experiment test command rejects the archived choice under the current code/data/runtime fingerprints. Before test inference, establish and document a compatible execution setup and an explicit carry-forward procedure, or rerun development in a fresh directory. This audit does not bypass that check or rewrite run provenance.",
+  "limitations": [
+    "Runtime and model settings are verified against recorded metadata, not by rerunning models.",
+    "Optional Meltemi locally converted weights were not available for independent verification.",
+    "The practice_models single-prompt exploration is separate from the six-prompt, two-model selection."
+  ]
+}

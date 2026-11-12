@@ -50,10 +50,12 @@ independent judgments. See [the workflow commands](data/README.md#review-workflo
 and [annotation guidelines](guidelines/annotation_guidelines.md).
 
 The completed pilot review and imported judgments are in `data/review/pilot/`.
-Label agreement is 17/20 (85%), with Cohen's kappa 0.714286. Twelve examples need
-adjudication: three label disagreements and nine additional sentence-sufficiency
-disagreements. See the [recorded review and handoff](data/README.md#pilot-review-recorded-on-12-november-2026).
-The original submission is preserved, and final decisions remain blank.
+Independent label agreement is 17/20 (85%), with Cohen's kappa 0.714286. Decisions
+for the three label disagreements and nine additional sentence-sufficiency
+disagreements have been imported into `data/review/pilot/adjudicated.jsonl`.
+See the [recorded review](data/README.md#pilot-review-recorded-on-12-november-2026).
+The original submission and independent judgments are preserved. Attribution and
+adjudication notes are optional; the submitted blank values remain blank.
 
 For a new independent review, read the annotation rules and practice on examples
 outside the review set, then give the reviewer only a blank CSV and the guidelines.
@@ -65,7 +67,8 @@ The experiment reads the canonical `data/pilot/pilot.jsonl` and
 `data/final/final.jsonl` files. Review commands create separate outputs; after
 human review, retain the annotation history and adopt the approved output at the
 corresponding canonical path before freezing the experiment. The canonical pilot
-still contains the primary annotations; the reviewed copy is awaiting adjudication.
+now contains the completed adjudication; its original primary annotations remain
+in `data/review/pilot/source.jsonl`. The test dataset is unchanged.
 
 ## Running the experiment
 
@@ -113,6 +116,29 @@ python -m idioms.evaluate --split dev --allow-legacy
 Legacy mode cannot verify the original inputs or parser version. It does not
 upgrade old records or make them eligible for resumption. It also cannot mix
 legacy predictions with new manifested predictions in the same comparison.
+
+### Checked development runs after pilot adjudication
+
+Gizem's manifested runs in `results/practice/` cover six prompts, Krikri and
+Llama, both conditions, and the baseline (26 runs, 520 predictions). The
+[reuse audit](results/reviewed_dev_check.json) validates every saved input and
+label against the adjudicated pilot and traces the recorded pipeline hashes to
+Git commits. All inputs and gold labels match, so the overall scores and prompt
+selection remain valid. `physical_en` remains selected, with mean macro-F1
+0.5657. The only changed analysis grouping is `pilot-011`, now sentence-sufficient;
+the audit includes the updated subgroup accuracies.
+
+`results/practice_models/` is a separate single-prompt exploration including
+Meltemi (8 runs, 160 predictions), not another six-prompt comparison. Original
+predictions, manifests, and choices in both directories remain untouched.
+
+This check does not make the archives directly resumable. The current data and
+pipeline fingerprints and this machine's runtime differ from the saved setup,
+so `experiment test` still rejects the archived choice. Before running the test
+set, document a compatible execution setup and an explicit procedure for carrying
+forward the verified prompt choice, or rerun development in a fresh directory.
+Do not edit the archived fingerprints to pass the check. No new model inference
+was performed for this audit.
 
 ### Answer parsing and failures
 
