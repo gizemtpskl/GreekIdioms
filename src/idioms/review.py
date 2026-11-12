@@ -15,11 +15,16 @@ from .provenance import fingerprint
 
 PASSAGE_FIELDS = ("id", "expression", "target_sentence", "span", "context_before", "context_after")
 REVIEW_FIELDS = PASSAGE_FIELDS + ("label_reviewer2", "sentence_sufficient_reviewer2", "notes_reviewer2")
-DECISION_FIELDS = (
+LEGACY_DECISION_FIELDS = (
     "id", "label_reviewer1", "label_reviewer2", "sentence_sufficient_reviewer1",
     "sentence_sufficient_reviewer2", "final_label", "final_sentence_sufficient",
     "adjudicator", "adjudication_notes",
 )
+FINAL_DECISION_FIELDS = LEGACY_DECISION_FIELDS[5:]
+DECISION_REFERENCE_FIELDS = PASSAGE_FIELDS + LEGACY_DECISION_FIELDS[1:5] + (
+    "notes_reviewer2", "disagreement_type",
+)
+DECISION_FIELDS = DECISION_REFERENCE_FIELDS + FINAL_DECISION_FIELDS
 
 
 def checked_data(path):
@@ -47,10 +52,10 @@ def write_csv(path, fields, rows):
         writer.writerows(rows)
 
 
-def read_csv(path, fields):
+def read_csv(path, fields, alternatives=()):
     with open(path, encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
-        if reader.fieldnames != list(fields):
+        if reader.fieldnames not in [list(fields), *(list(option) for option in alternatives)]:
             raise ValueError(f"{path}: unexpected columns; preserve the exported headers")
         rows = list(reader)
     if any(None in row or any(v is None for v in row.values()) for row in rows):
@@ -104,11 +109,17 @@ def export_review(data, out_dir, ids=None, seed=0):
 
 def decision_row(ex):
     row = dict.fromkeys(DECISION_FIELDS, "")
-    for field in ("id", "label_reviewer1", "label_reviewer2"):
-        row[field] = ex[field]
+    for field in PASSAGE_FIELDS + ("label_reviewer1", "label_reviewer2", "notes_reviewer2"):
+        row[field] = ex.get(field, "")
     for field in ("sentence_sufficient_reviewer1", "sentence_sufficient_reviewer2"):
         if ex.get(field) is not None:
             row[field] = str(ex[field]).lower()
+    differences = []
+    if ex["label_reviewer1"] != ex["label_reviewer2"]:
+        differences.append("label")
+    if ex.get("sentence_sufficient_reviewer1") != ex.get("sentence_sufficient_reviewer2"):
+        differences.append("sentence_sufficiency")
+    row["disagreement_type"] = "; ".join(differences)
     return row
 
 
@@ -162,15 +173,15 @@ def import_review(data, review_csv, manifest_path, reviewer, out, decisions_out)
 def adjudicate(data, decisions_csv, out):
     records = checked_data(data)
     pending = {ex["id"]: ex for ex in records if ex.get("review_status") == "pending"}
-    rows = read_csv(decisions_csv, DECISION_FIELDS)
+    rows = read_csv(decisions_csv, DECISION_FIELDS, alternatives=(LEGACY_DECISION_FIELDS,))
     if {r["id"] for r in rows} != pending.keys():
         raise ValueError("decision IDs must match all pending examples exactly")
     for row in rows:
         ex = pending[row["id"]]
         expected = decision_row(ex)
-        for field in DECISION_FIELDS[:5]:
-            if row[field] != expected[field]:
-                raise ValueError(f"{ex['id']}: independent annotation fields were changed")
+        for field in DECISION_REFERENCE_FIELDS:
+            if field in row and row[field] != expected[field]:
+                raise ValueError(f"{ex['id']}: read-only passage or annotation fields were changed: {field}")
         label = parse_annotation(row["final_label"], ex["id"])
         sufficient = parse_bool(row["final_sentence_sufficient"], ex["id"])
         if not row["adjudicator"].strip() or not row["adjudication_notes"].strip():

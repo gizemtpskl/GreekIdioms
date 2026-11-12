@@ -15,7 +15,7 @@ from idioms.metrics import cohen_kappa
 from idioms.models import AlwaysIdiomatic
 from idioms.prompts import Template
 from idioms.run import run
-from idioms.review import (DECISION_FIELDS, REVIEW_FIELDS, adjudicate, export_review,
+from idioms.review import (DECISION_FIELDS, LEGACY_DECISION_FIELDS, REVIEW_FIELDS, adjudicate, export_review,
                            import_review, read_csv, write_csv)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -83,6 +83,10 @@ class TestReview(unittest.TestCase):
             self.select(before)
         summary_before = agreement_summary(before)
         rows = read_csv(self.decisions, DECISION_FIELDS)
+        pending = next(ex for ex in before if ex["review_status"] == "pending")
+        for field in ("expression", "target_sentence", "span", "context_before", "context_after", "notes_reviewer2"):
+            self.assertEqual(rows[0][field], pending[field])
+        self.assertEqual(rows[0]["disagreement_type"], "label")
         rows[0].update(final_label="ambiguous", final_sentence_sufficient="false",
                        adjudicator="first + second", adjudication_notes="Unresolved dual reading.")
         completed_decisions = self.folder / "completed_decisions.csv"
@@ -160,6 +164,33 @@ class TestReview(unittest.TestCase):
         self.assertNotIn("label_reviewer2", rows[1])
         self.assertEqual(agreement_summary(rows)["n"], 1)
         self.assertEqual(len(self.select(rows)), 2)
+
+    def test_adjudication_rejects_modified_reference_columns(self):
+        self.merge(self.fill_review(disagree=True))
+        original = read_csv(self.decisions, DECISION_FIELDS)
+        for field in ("target_sentence", "context_before", "span", "notes_reviewer2", "disagreement_type"):
+            with self.subTest(field=field):
+                rows = copy.deepcopy(original)
+                rows[0].update(final_label="ambiguous", final_sentence_sufficient="false",
+                               adjudicator="first + second", adjudication_notes="Unresolved dual reading.")
+                rows[0][field] += " changed"
+                path = self.folder / f"changed_{field}.csv"
+                write_csv(path, DECISION_FIELDS, rows)
+                with self.assertRaisesRegex(ValueError, "read-only"):
+                    adjudicate(self.reviewed, path, self.folder / "final.jsonl")
+        self.assertFalse((self.folder / "final.jsonl").exists())
+
+    def test_adjudication_accepts_existing_short_sheets(self):
+        self.merge(self.fill_review(disagree=True))
+        full_rows = read_csv(self.decisions, DECISION_FIELDS)
+        rows = [{field: row[field] for field in LEGACY_DECISION_FIELDS} for row in full_rows]
+        rows[0].update(final_label="ambiguous", final_sentence_sufficient="false",
+                       adjudicator="first + second", adjudication_notes="Unresolved dual reading.")
+        path = self.folder / "legacy_completed.csv"
+        write_csv(path, LEGACY_DECISION_FIELDS, rows)
+        final = self.folder / "final.jsonl"
+        self.assertEqual(adjudicate(self.reviewed, path, final), 1)
+        self.assertEqual(check(read_jsonl(final)), [])
 
     def test_agreement_requires_original_labels_and_reports_undefined_kappa(self):
         with self.assertRaisesRegex(ValueError, "original label_reviewer1"):

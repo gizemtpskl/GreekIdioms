@@ -56,19 +56,84 @@ expression IDs, or exact expression names. It prints the binary evaluation overv
 and the number of excluded ambiguous items. Items marked `review_status: pending`
 cannot be used for inference until adjudicated.
 
+## Pilot review recorded on 12 November 2026
+
+All 20 pilot examples have a submitted second review. The original submission
+in `review/pilot/reviewer.csv` is preserved unchanged. The imported second review
+uses the pseudonymous identifier `ann_2`; this identifies the submission, not a
+verified name. Confirm the reviewer's background and independent-review procedure
+with Angeliki for the final report.
+
+Label agreement on the submitted judgments is **17/20 (85%)**, with **Cohen's
+kappa = 0.714286**, including the ambiguous judgment. The label disagreements are:
+
+| ID | Primary label | Second reviewer |
+|---|---|---|
+| `pilot-009` | idiomatic | literal |
+| `pilot-012` | literal | ambiguous |
+| `pilot-013` | idiomatic | literal |
+
+Sentence-sufficiency agreement is **11/20 (55%)**. Nine other examples differ on
+whether the target sentence alone is sufficient: `pilot-003`, `pilot-004`,
+`pilot-007`, `pilot-008`, `pilot-011`, `pilot-015`, `pilot-016`, `pilot-019`, and
+`pilot-020`. This makes **12 pending adjudications** in total. Clarify the meaning
+of sentence sufficiency before resolving these cases: `true` means the target
+sentence alone supports the same single interpretation, without the surrounding
+context. Keep the submitted judgments even if this clarification changes a final
+decision.
+
+| File under `review/pilot/` | Purpose |
+|---|---|
+| `reviewer.csv` | Unmodified submitted review; also preserved in commit `b42aca9` |
+| `source.jsonl` | Exact snapshot of the primary pilot annotations used for comparison |
+| `reviewer_completed.csv` | Working copy; only `pilot-012`'s spelling `ambigious` is corrected to `ambiguous` |
+| `reviewed.jsonl` | Both independent judgments, with 8 agreed and 12 pending examples |
+| `agreement.json` | Agreement figures, coverage, source hashes, correction record, and reviewer-ID note |
+| `adjudication.csv` | One sheet with the 12 disputed examples: sentences, contexts, both judgments, reviewer notes, and four blank final-decision columns |
+
+The importer also applies its existing case/whitespace normalization; it does not
+change the judgments. No final decisions have been made, and the canonical pilot
+and test datasets are unchanged. This review covers the pilot only.
+
+**Next human step:** Angeliki and the second reviewer discuss the examples in
+`adjudication.csv` and save a completed copy as `adjudication_completed.csv`.
+Each row includes all the reference information; no second sheet is needed.
+Fill only the final four columns: `final_label`, `final_sentence_sufficient`, `adjudicator`, and
+`adjudication_notes` for every row, including rows where only sufficiency differs.
+If a meaning remains unresolved, use `ambiguous`, set sufficiency to `false`, and
+explain the reason. Leave every other column unchanged. Neither reviewer's
+original answer is automatically preferred.
+
+Then run from the repository root:
+
+```bash
+PYTHONPATH=src python3 -m idioms.review adjudicate data/review/pilot/reviewed.jsonl \
+    data/review/pilot/adjudication_completed.csv --out data/review/pilot/adjudicated.jsonl
+```
+
+Keep the independent agreement figures above for reporting. Adjudication does not
+replace them with agreement on the final labels. Inspect the output before adopting
+it as the canonical pilot, and check the development-run compatibility before
+starting final testing.
+
 ## Review workflow
 
 These commands run from the repository root after setup. For annotation work and
 tests alone, no model dependencies are needed: use `PYTHONPATH=src python3` in
 place of `python` below.
 
+The pilot import below has already been performed. These commands document the
+procedure; use new destinations for a new review round rather than overwriting
+the recorded artifacts.
+
 1. Read the versioned annotation rules in the
    [guidelines](../guidelines/annotation_guidelines.md) and practice using examples
    outside the review set. Both reviewers should use the same version. Review
    all pilot items. Decide the final-set review subset and
    record its size and selection method before looking at model predictions.
-2. Export a blind packet. `data/review/pilot/` already contains a blank packet
-   generated from the current pilot file with seed 0. The command below shows
+2. Export a blind packet. `data/review/pilot/` contains the existing pilot packet
+   generated from the current pilot file with seed 0. Its `reviewer.csv` has now
+   been completed; the recorded outputs are described above. The command below shows
    how it was generated; to export again, use a new directory. Commands refuse
    to overwrite existing outputs.
 
@@ -101,8 +166,9 @@ place of `python` below.
    including ambiguous judgments; it never substitutes the final gold labels.
    The agreement command accepts multiple JSONL paths, or defaults to both
    canonical splits if no paths are supplied.
-4. Discuss each row in `adjudication.csv`. Preserve its first five columns and
-   fill `final_label`, `final_sentence_sufficient`, `adjudicator`, and
+4. Discuss each row in `adjudication.csv`, which includes the sentence, context,
+   both original judgments, reviewer notes, and the type of disagreement. Preserve
+   these reference columns and fill only `final_label`, `final_sentence_sufficient`, `adjudicator`, and
    `adjudication_notes`. Save as `adjudication_completed.csv`, then run:
 
    ```bash

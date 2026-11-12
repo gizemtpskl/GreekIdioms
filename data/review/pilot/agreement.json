@@ -1,0 +1,114 @@
+{
+  "computed_on": "2026-11-12",
+  "status": "Pre-adjudication agreement on the submitted pilot judgments; final decisions are still blank.",
+  "repository_commit": "b6e23e6bea31ce53f1fb47424f6d60bd8c4eb20c",
+  "submission_commit": "b42aca9e965c860254dc5c6b0a3a011c7e8d4490",
+  "reviewer1_id": "ann_1",
+  "reviewer2_id": "ann_2",
+  "reviewer2_id_note": "Pseudonymous ID assigned to the second-reviewer submission. Name, qualifications and independent-review procedure should be confirmed with Angeliki for reporting; they are not established by the CSV alone.",
+  "coverage": {
+    "split": "dev",
+    "reviewed": 20,
+    "total": 20,
+    "selection": "All 20 pilot items in the exported manifest; no test examples included."
+  },
+  "source": {
+    "path": "data/review/pilot/source.jsonl",
+    "sha256": "1d421e3bf99e9191834d6a63050530b081773bdaac305f0eb43b126068c30eed",
+    "dataset_fingerprint": "0fea5bab1b8aff9ff3d16b4b8ea1fcd6b49b67f1af7bb086b6973254d4d56154"
+  },
+  "submitted_csv": {
+    "path": "data/review/pilot/reviewer.csv",
+    "sha256": "af2ca67299c9cf5befa8492df19e70481d0a9066f549776e68146f055fba66d4",
+    "preserved_unchanged": true
+  },
+  "completed_csv": {
+    "path": "data/review/pilot/reviewer_completed.csv",
+    "sha256": "65573a03247a38682e95edb3b5bf08c35d96964ee47d06951320ba60932a7e27",
+    "corrections": [
+      {
+        "id": "pilot-012",
+        "field": "label_reviewer2",
+        "submitted": "ambigious",
+        "working_copy": "ambiguous",
+        "reason": "Spelling correction; the accompanying note explicitly describes both readings."
+      }
+    ],
+    "normalization_note": "Only the listed cell spelling is changed in the working CSV. The existing importer trims whitespace and normalizes label/boolean case; it does not change judgments."
+  },
+  "labels": {
+    "categories": [
+      "literal",
+      "idiomatic",
+      "ambiguous"
+    ],
+    "agree": 17,
+    "n": 20,
+    "raw_agreement": 0.85,
+    "cohen_kappa": 0.7142857142857143,
+    "reviewer1_counts": {
+      "idiomatic": 10,
+      "literal": 10
+    },
+    "reviewer2_counts": {
+      "idiomatic": 8,
+      "literal": 11,
+      "ambiguous": 1
+    },
+    "disagreements": [
+      {
+        "id": "pilot-009",
+        "label_reviewer1": "idiomatic",
+        "label_reviewer2": "literal"
+      },
+      {
+        "id": "pilot-012",
+        "label_reviewer1": "literal",
+        "label_reviewer2": "ambiguous"
+      },
+      {
+        "id": "pilot-013",
+        "label_reviewer1": "idiomatic",
+        "label_reviewer2": "literal"
+      }
+    ]
+  },
+  "sentence_sufficiency": {
+    "agree": 11,
+    "n": 20,
+    "raw_agreement": 0.55,
+    "disagreement_ids": [
+      "pilot-003",
+      "pilot-004",
+      "pilot-007",
+      "pilot-008",
+      "pilot-011",
+      "pilot-015",
+      "pilot-016",
+      "pilot-019",
+      "pilot-020"
+    ],
+    "note": "Judgments are preserved as submitted. Clarify whether the reviewer interpreted sufficiency as the target sentence alone before adjudication; any later clarification must not overwrite these independent answers."
+  },
+  "pending_adjudication": {
+    "count": 12,
+    "ids": [
+      "pilot-003",
+      "pilot-004",
+      "pilot-007",
+      "pilot-008",
+      "pilot-009",
+      "pilot-011",
+      "pilot-012",
+      "pilot-013",
+      "pilot-015",
+      "pilot-016",
+      "pilot-019",
+      "pilot-020"
+    ],
+    "decision_file": "data/review/pilot/adjudication.csv",
+    "sheet_note": "The decision file includes sentences, contexts, independent judgments, and notes. Fill only the final four columns."
+  },
+  "canonical_dataset_changed": false,
+  "final_adjudication_performed": false
+}

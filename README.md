@@ -49,18 +49,23 @@ notes, import a second review, and record adjudication while preserving both
 independent judgments. See [the workflow commands](data/README.md#review-workflow)
 and [annotation guidelines](guidelines/annotation_guidelines.md).
 
-A blank packet for all 20 pilot examples is in `data/review/pilot/`. Read the
-annotation rules and practice on examples outside the review set before handing
-only `reviewer.csv` and the guidelines to the reviewer. Compute agreement before
-discussing disagreements. Resolve all
-pending labels and sentence-sufficiency judgments before using the reviewed data
-for inference; ambiguous examples remain excluded from binary evaluation.
+The completed pilot review and imported judgments are in `data/review/pilot/`.
+Label agreement is 17/20 (85%), with Cohen's kappa 0.714286. Twelve examples need
+adjudication: three label disagreements and nine additional sentence-sufficiency
+disagreements. See the [recorded review and handoff](data/README.md#pilot-review-recorded-on-12-november-2026).
+The original submission is preserved, and final decisions remain blank.
+
+For a new independent review, read the annotation rules and practice on examples
+outside the review set, then give the reviewer only a blank CSV and the guidelines.
+Compute agreement before discussing disagreements. Resolve all pending labels
+and sentence-sufficiency judgments before using reviewed data for inference;
+ambiguous examples remain excluded from binary evaluation.
 
 The experiment reads the canonical `data/pilot/pilot.jsonl` and
 `data/final/final.jsonl` files. Review commands create separate outputs; after
 human review, retain the annotation history and adopt the approved output at the
-corresponding canonical path before freezing the experiment. The blank packet
-does not mean the dataset has been independently reviewed.
+corresponding canonical path before freezing the experiment. The canonical pilot
+still contains the primary annotations; the reviewed copy is awaiting adjudication.
 
 ## Running the experiment
 

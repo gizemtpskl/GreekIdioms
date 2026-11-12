@@ -1,0 +1,13 @@
+﻿id,expression,target_sentence,span,context_before,context_after,label_reviewer1,label_reviewer2,sentence_sufficient_reviewer1,sentence_sufficient_reviewer2,notes_reviewer2,disagreement_type,final_label,final_sentence_sufficient,adjudicator,adjudication_notes
+pilot-011,ρίχνω λάδι στη φωτιά,Αυτό απλά έριξε λάδι στη φωτιά.,έριξε λάδι στη φωτιά,Η διαφωνία τους ήταν οξεία.,,idiomatic,idiomatic,false,true,,sentence_sufficiency,,,,
+pilot-019,δέσιμο των κορδονιών / δένω τα κορδόνια,Δεν ξέρει ούτε τα κορδόνια του να δέσει.,κορδόνια του να δέσει,Το παιδί είναι μόλις τριών ετών.,,literal,literal,false,true,,sentence_sufficiency,,,,
+pilot-015,γυρίζω σελίδα,Ήταν ώρα να γυρίσει σελίδα.,γυρίσει σελίδα,Μετά το διαζύγιο μετακόμισε σε άλλη πόλη.,,idiomatic,idiomatic,false,true,,sentence_sufficiency,,,,
+pilot-012,ρίχνω λάδι στη φωτιά,Αυτό απλά έριξε λάδι στη φωτιά.,έριξε λάδι στη φωτιά,Προσπάθησε να ανάψει το τζάκι.,,literal,ambiguous,false,false,"Could be interpreted both ways, would need more context to be sure",label,,,,
+pilot-003,σπάω τον πάγο,Τελικά έπρεπε κάποιος να σπάσει τον πάγο.,σπάσει τον πάγο,Στο πρώτο ραντεβού κανείς δεν μιλούσε.,,idiomatic,idiomatic,false,true,,sentence_sufficiency,,,,
+pilot-004,σπάω τον πάγο,Τελικά έπρεπε κάποιος να σπάσει τον πάγο.,σπάσει τον πάγο,Η έξοδος της βάρκας είχε αποκλειστεί.,,literal,literal,false,true,,sentence_sufficiency,,,,
+pilot-008,ανοίγω τα χαρτιά μου,Αποφάσισε να ανοίξει τα χαρτιά του.,ανοίξει τα χαρτιά του,Ήταν η σειρά του στην παρτίδα.,,literal,literal,false,true,,sentence_sufficiency,,,,
+pilot-020,δέσιμο των κορδονιών / δένω τα κορδόνια,Δεν ξέρει ούτε τα κορδόνια του να δέσει.,κορδόνια του να δέσει,Ανέλαβε τη διεύθυνση της εταιρείας χωρίς γνώσεις.,,idiomatic,idiomatic,false,true,,sentence_sufficiency,,,,
+pilot-007,ανοίγω τα χαρτιά μου,Αποφάσισε να ανοίξει τα χαρτιά του.,ανοίξει τα χαρτιά του,Η διαπραγμάτευση κρατούσε ώρες.,,idiomatic,idiomatic,false,true,,sentence_sufficiency,,,,
+pilot-016,γυρίζω σελίδα,Ήταν ώρα να γυρίσει σελίδα.,γυρίσει σελίδα,Τέλειωσε το πρώτο μέρος του μυθιστορήματος.,,literal,literal,false,true,,sentence_sufficiency,,,,
+pilot-009,ρίχνω λάδι στη φωτιά,Οι εμπρηστικές δηλώσεις έριξαν λάδι στη φωτιά.,έριξαν λάδι στη φωτιά,Η πολιτική ένταση ήταν ήδη μεγάλη.,Οι διαδηλώσεις εντάθηκαν αμέσως.,idiomatic,literal,true,true,,label,,,,
+pilot-013,γυρίζω σελίδα,Η εταιρεία γυρίζει σελίδα μετά την αλλαγή διοίκησης.,γυρίζει σελίδα,Τα προηγούμενα χρόνια ήταν γεμάτα ζημίες.,Τώρα εστιάζει στην καινοτομία.,idiomatic,literal,true,true,,label,,,,

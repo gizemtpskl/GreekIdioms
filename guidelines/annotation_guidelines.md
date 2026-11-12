@@ -147,7 +147,9 @@ subset was chosen. If both reviewers use just one identical category, kappa is
 undefined; raw agreement is still reported.
 
 Angeliki and the second reviewer then discuss disagreements in either the label
-or sentence sufficiency. For each pending item, record `final_label`,
+or sentence sufficiency. Use `adjudication.csv`: each row contains the sentence,
+context, both independent judgments, and reviewer notes. Fill only its final four
+columns. For each pending item, record `final_label`,
 `final_sentence_sufficient`, the adjudicator(s), and a short reason. If the reading
 cannot be resolved, set the final label to `ambiguous`; it remains in the dataset
 but is excluded from binary evaluation. Do not overwrite independent labels.
