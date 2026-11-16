@@ -1,0 +1,50 @@
+﻿id,expression_id,expression,gold,pred_sentence_only,pred_with_context,change,sentence_sufficient,target_sentence,context_before,context_after,notes
+test-002,e06,βάζω νερό στο κρασί μου,literal,idiomatic,idiomatic,wrong_both,True,Ο ταβερνιάρης έβαλε νερό στο κρασί για να βγάλει μεγαλύτερο κέρδος.,Το μαγαζί αντιμετώπιζε σοβαρά οικονομικά προβλήματα.,Οι πελάτες αμέσως κατάλαβαν τη διαφορά στη γεύση.,
+test-004,e07,κάνω τη πάπια,literal,idiomatic,literal,fixed_by_context,True,Ο ηθοποιός έκανε την πάπια στην παιδική παράσταση.,Το σενάριο απαιτούσε μιμήσεις ζώων της φάρμας.,Τα παιδιά στην αίθουσα ενθουσιάστηκαν και γελούσαν.,
+test-005,e08,τρώω τη γλώσσα μου,idiomatic,idiomatic,literal,broken_by_context,True,"Μόλις είδα τον διευθυντή, έφαγα τη γλώσσα μου.",Ήμουν έτοιμος να διαμαρτυρηθώ έντονα.,Δεν κατάφερα να ψελλίσω ούτε μία λέξη.,
+test-009,e10,μου βγήκε το λάδι,idiomatic,idiomatic,literal,broken_by_context,True,Μου βγήκε το λάδι μέχρι να τελειώσω την αναφορά.,Δούλευα ασταμάτητα όλο το σαββατοκύριακο.,Ήμουν τελείως εξαντλημένος στο τέλος.,
+test-011,e11,παίρνω το καπέλο μου,idiomatic,literal,literal,wrong_both,True,"Αν αποτύχει το έργο, θα πάρω το καπέλο μου και θα φύγω.",Ο διευθύνων σύμβουλος ανέλαβε όλη την ευθύνη.,Δεν σκόπευε να κρατήσει τη θέση του χωρίς αποτελέσματα.,
+test-013,e12,ρίχνω άκυρο,idiomatic,literal,literal,wrong_both,True,Η επιτροπή έριξε άκυρο στην πρόταση της εταιρείας.,Ο φάκελος είχε σοβαρές ελλείψεις.,Έτσι η διαδικασία ξεκίνησε από την αρχή.,
+test-019,e15,σηκώνω τα χέρια ψηλά,idiomatic,literal,literal,wrong_both,True,Ο καθηγητής σήκωσε τα χέρια ψηλά με την αδιαφορία των μαθητών.,Προσπάθησε με κάθε τρόπο να τους εξηγήσει το μάθημα.,Δεν ήξερε πλέον τι άλλο να κάνει.,
+test-021,e16,κάνω τα γλυκά μάτια,idiomatic,idiomatic,literal,broken_by_context,True,Η Μαρία έκανε τα γλυκά μάτια στον πωλητή για να πάρει έκπτωση.,Το προϊόν ήταν ελαφρώς ακριβότερο από το προϋπολογισμένο.,Τελικά κατάφερε να πάρει μια μικρή μείωση τιμής.,
+test-023,e17,τρώω πόρτα,idiomatic,literal,literal,wrong_both,True,Ο νεαρός έφαγε πόρτα στο κλαμπ επειδή δεν φορούσε κατάλληλα ρούχα.,Ο πορτιέρης του απαγόρευσε την είσοδο.,Αναγκάστηκε να επιστρέψει στο σπίτι του.,
+test-025,e18,βάζω φρένο,idiomatic,idiomatic,literal,broken_by_context,True,Η κυβέρνηση προσπάθησε να βάλει φρένο στην αύξηση των τιμών.,Ο πληθωρισμός είχε φτάσει σε επίπεδα ρεκόρ.,Επέβαλε ανώτατα όρια κέρδους στα βασικά αγαθά.,
+test-027,e19,παίρνω φωτιά,idiomatic,literal,literal,wrong_both,True,Οι τιμές των καυσίμων πήραν φωτιά μέσα σε λίγες μέρες.,Η διεθνής κρίση επηρέασε αμέσως την αγορά.,Οι καταναλωτές δυσκολεύονταν να ανταπεξέλθουν.,
+test-029,e20,ανοίγω την καρδιά μου,idiomatic,literal,literal,wrong_both,True,Η Ελένη άνοιξε την καρδιά της στην καλύτερή της φίλη.,Έκρυβε τα συναισθήματά της για πολύ καιρό.,Ένιωσε μεγάλη ανακούφιση αφού μίλησε.,
+test-031,e21,χάνω τη γη κάτω από τα πόδια μου,idiomatic,idiomatic,literal,broken_by_context,True,"Όταν άκουσε τα δυσάρεστα νέα, έχασε τη γη κάτω από τα πόδια του.",Δεν περιμένε καθόλου αυτή την εξέλιξη.,Χρειάστηκε λίγο χρόνο για να συνέλθει από το σοκ.,
+test-033,e22,ρίχνω αυλαία,idiomatic,literal,literal,wrong_both,True,Το φεστιβάλ έριξε αυλαία με μια εντυπωσιακή συναυλία.,Οι εκδηλώσεις διήρκεσαν μία εβδομάδα.,Το κοινό ανανέωσε το ραντεβού του για την επόμενη χρονιά.,
+test-036,e23,βγάζω τα κάστανα από τη φωτιά,literal,idiomatic,literal,fixed_by_context,True,Ο παππούς έβγαλε τα κάστανα από τη φωτιά με μια τσιμπίδα.,Τα είχαν ψήσει στο τζάκι το χειμωνιάτικο βράδυ.,Τα έβαλε στο πιάτο για να κρυώσουν.,
+test-037,e24,χάνω το τρένο,idiomatic,idiomatic,literal,broken_by_context,True,Η εταιρεία έχασε το τρένο της τεχνολογικής εξέλιξης.,Αρνήθηκε να επενδύσει στα νέα ψηφιακά εργαλεία.,Οι ανταγωνιστές της επικράτησαν πλήρως στην αγορά.,
+test-039,e25,πιάνω την καλή,idiomatic,literal,literal,wrong_both,True,Ο επιχειρηματίας έπιασε την καλή με τη νέα του εφεύρεση.,Το προϊόν έγινε αμέσως ανάρπαστο παγκοσμίως.,Κέρδισε εκατομμύρια μέσα σε λίγους μήνες.,
+test-042,e06,βάζω νερό στο κρασί μου,literal,idiomatic,idiomatic,wrong_both,False,Τελικά έπρεπε να βάλει νερό στο κρασί του.,Το αλκοόλ ήταν υπερβολικά δυνατό για τους καλεσμένους.,,context dependent pair
+test-044,e07,κάνω τη πάπια,literal,idiomatic,idiomatic,wrong_both,False,Αποφάσισε να κάνει την πάπια.,Στο παιχνίδι μιμήσεων με τα παιδιά.,,context dependent pair
+test-046,e08,τρώω τη γλώσσα μου,literal,idiomatic,idiomatic,wrong_both,False,Σχεδόν έφαγε τη γλώσσα του.,Ενώ έτρωγε βιαστικά το μεσημεριανό του.,,context dependent pair
+test-047,e09,σήκωσε ψηλά τον αμανέ,idiomatic,literal,idiomatic,fixed_by_context,False,Αμέσως σήκωσε ψηλά τον αμανέ.,Μόλις πήρε την προαγωγή στη δουλειά.,,context dependent pair
+test-050,e10,μου βγήκε το λάδι,literal,idiomatic,literal,fixed_by_context,False,Μου βγήκε το λάδι σήμερα.,Καθώς πίεζα τις ελιές στο παραδοσιακό πιεστήριο.,,context dependent pair
+test-051,e11,παίρνω το καπέλο μου,idiomatic,literal,literal,wrong_both,False,Πήρε το καπέλο του και έφυγε.,Μετά την προσβολή στη συνεδρίαση του συμβουλίου.,,context dependent pair
+test-053,e12,ρίχνω άκυρο,idiomatic,literal,literal,wrong_both,False,Τελικά έριξαν άκυρο.,Στην πρόταση συνεργασίας που υποβλήθηκε.,,context dependent pair
+test-056,e13,δέσιμο των χεριών / δένω τα χέρια,literal,idiomatic,literal,fixed_by_context,False,Αυτό τους έδεσε τα χέρια.,Το σχοινί κατά τη διάρκεια του παιχνιδιού.,,context dependent pair
+test-057,e14,πιάνω το σφυγμό,idiomatic,literal,idiomatic,fixed_by_context,False,Προσπάθησε να πιάσει τον σφυγμό.,Στις αντιδράσεις του πλήθους στη διαδήλωση.,,context dependent pair
+test-059,e15,σηκώνω τα χέρια ψηλά,idiomatic,literal,idiomatic,fixed_by_context,False,Σήκωσε τα χέρια ψηλά.,Όταν είδε ότι η κατάσταση ήταν ανεξέλεγκτη.,,context dependent pair
+test-062,e16,κάνω τα γλυκά μάτια,literal,idiomatic,idiomatic,wrong_both,False,Του έκανε τα γλυκά μάτια.,Στο γλύπτωμα από ζαχαρόπαστα.,,context dependent pair
+test-063,e17,τρώω πόρτα,idiomatic,literal,idiomatic,fixed_by_context,False,Ήταν βέβαιο ότι θα έτρωγε πόρτα.,Χωρίς πρόσκληση στη δεξίωση.,,context dependent pair
+test-066,e18,βάζω φρένο,literal,idiomatic,literal,fixed_by_context,False,Πρέπει να βάλουμε φρένο.,Στον πίσω τροχό της μοτοσυκλέτας.,,context dependent pair
+test-067,e19,παίρνω φωτιά,idiomatic,literal,idiomatic,fixed_by_context,False,Όλα πήραν φωτιά.,Με τις νέες αυξήσεις στην εφορία.,,context dependent pair
+test-070,e20,ανοίγω την καρδιά μου,literal,idiomatic,literal,fixed_by_context,False,Άνοιξε την καρδιά του.,Ο καρδιοχειρουργός στο χειρουργικό τραπέζι.,,context dependent pair
+test-072,e21,χάνω τη γη κάτω από τα πόδια μου,literal,idiomatic,literal,fixed_by_context,False,Έχασε τη γη κάτω από τα πόδια του.,Κατά τη διάρκεια του σεισμού.,,context dependent pair
+test-073,e22,ρίχνω αυλαία,idiomatic,literal,literal,wrong_both,False,Τελικά έριξαν αυλαία.,Στις διαπραγματεύσεις της συνδιάσκεψης.,,context dependent pair
+test-076,e23,βγάζω τα κάστανα από τη φωτιά,literal,idiomatic,literal,fixed_by_context,False,Έβγαλε τα κάστανα από τη φωτιά.,Στο τζάκι του ορεινού καταφυγίου.,,context dependent pair
+test-077,e24,χάνω το τρένο,idiomatic,literal,idiomatic,fixed_by_context,False,Φαίνεται ότι έχασε το τρένο.,Στην κούρσα των νέων τεχνολογιών.,,context dependent pair
+test-079,e25,πιάνω την καλή,idiomatic,literal,idiomatic,fixed_by_context,False,Τελικά έπιασε την καλή.,Με την επένδυση στα ακίνητα.,,context dependent pair
+test-083,e08,τρώω τη γλώσσα μου,idiomatic,idiomatic,literal,broken_by_context,True,Έφαγε τη γλώσσα του όταν είδε το ατύχημα.,Ήταν σε κατάσταση σοκ.,Δεν μπορούσε να καλέσει το ασθενοφόρο.,
+test-085,e10,μου βγήκε το λάδι,idiomatic,idiomatic,literal,broken_by_context,True,Τους βγήκε το λάδι για να ανηφορίσουν το βουνό.,Η διαδρομή ήταν εξαιρετικά δύσβατη.,Έφτασαν στην κορυφή μετά από πέντε ώρες.,
+test-086,e11,παίρνω το καπέλο μου,idiomatic,literal,literal,wrong_both,True,Ο προπονητής πήρε το καπέλο του μετά τη συντριβή της ομάδας.,Η ήττα ήταν η τέταρτη συνεχόμενη.,Υπέβαλε την παραίτησή του στη διοίκηση.,
+test-087,e12,ρίχνω άκυρο,idiomatic,idiomatic,literal,broken_by_context,True,Ο διευθυντής έριξε άκυρο στο αίτημα για άδεια.,Υπήρχε μεγάλη φόρτος εργασίας στο τμήμα.,Ο υπάλληλος αναγκάστηκε να εργαστεί κανονικά.,
+test-089,e14,πιάνω το σφυγμό,idiomatic,idiomatic,literal,broken_by_context,True,Η δημοσκόπηση προσπάθησε να πιάσει τον σφυγμό των ψηφοφόρων.,Οι εκλογές πλησίαζαν γρήγορα.,Τα αποτελέσματα έδειξαν αμφίρροπη μάχη.,
+test-090,e15,σηκώνω τα χέρια ψηλά,idiomatic,literal,idiomatic,fixed_by_context,True,Οι γιατροί σήκωσαν τα χέρια ψηλά μπροστά στη σπάνια ασθένεια.,Δοκίμασαν όλες τις γνωστές θεραπείες.,Ζήτησαν συνδρομή από εξειδικευμένο κέντρο του εξωτερικού.,
+test-092,e17,τρώω πόρτα,idiomatic,literal,literal,wrong_both,True,Έφαγαν πόρτα στην είσοδο της VIP περιοχής.,Δεν είχαν τα κατάλληλα εισιτήρια.,Παρέμειναν στον κοινό χώρο της συναυλίας.,
+test-093,e18,βάζω φρένο,idiomatic,literal,literal,wrong_both,True,Η αστυνομία έβαλε φρένο στη δράση της σπείρας.,Μετά από συντονισμένη επιχείρηση μηνών.,Συνελήφθησαν όλα τα ηγετικά στελέχη.,
+test-094,e19,παίρνω φωτιά,idiomatic,literal,literal,wrong_both,True,Τα τηλέφωνα στο τηλεφωνικό κέντρο πήραν φωτιά.,Μόλις ανακοινώθηκε η προσφορά.,Οι γραμμές παρέμειναν κατειλημμένες για ώρες.,
+test-096,e21,χάνω τη γη κάτω από τα πόδια μου,idiomatic,idiomatic,literal,broken_by_context,True,Έχασε τη γη κάτω από τα πόδια της όταν χρεοκόπησε η εταιρεία.,Είχε επενδύσει όλες τις οικονομίες της εκεί.,Βρέθηκε από τη μια μέρα στην άλλη χωρίς εισόδημα.,
+test-097,e22,ρίχνω αυλαία,idiomatic,literal,literal,wrong_both,True,Η μακροβιότερη σειρά της τηλεόρασης έριξε αυλαία εχθές.,Προβαλλόταν για πάνω από δέκα χρόνια.,Εκατομμύρια θεατές παρακολούθησαν το τελευταίο επεισόδιο.,
+test-100,e25,πιάνω την καλή,idiomatic,literal,literal,wrong_both,True,Νόμιζε ότι θα έπιανε την καλή αγοράζοντας κρυπτονομίσματα.,Είχε ακούσει ιστορίες για γρήγορο πλουτισμό.,Τελικά όμως έχασε το μεγαλύτερο μέρος του κεφαλαίου του.,
