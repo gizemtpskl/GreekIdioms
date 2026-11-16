@@ -1,0 +1,7 @@
+model,prompt,condition,n,accuracy,accuracy_ci,macro_f1,macro_f1_ci,predicted_literal,unreadable
+baseline,physical_en,sentence,100,0.600,"[0.50, 0.69]",0.375,"[0.33, 0.41]",0,0
+baseline,physical_en,context,100,0.600,"[0.50, 0.69]",0.375,"[0.33, 0.41]",0,0
+krikri-score,physical_en,sentence,100,0.620,"[0.52, 0.72]",0.618,"[0.52, 0.71]",52,0
+krikri-score,physical_en,context,100,0.670,"[0.57, 0.76]",0.670,"[0.57, 0.76]",63,0
+llama-score,physical_en,sentence,100,0.600,"[0.50, 0.69]",0.375,"[0.33, 0.41]",0,0
+llama-score,physical_en,context,100,0.600,"[0.50, 0.69]",0.375,"[0.33, 0.41]",0,0

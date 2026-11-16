@@ -1,0 +1,830 @@
+{
+  "run_id": "72959fd9ca2adda82bc0422b6e6b57cad27ab0da13f5f5a5ac2f0312cad7194e",
+  "config": {
+    "protocol_version": 1,
+    "data_hash": "5e319df3bfe7cbfadd1ba393c8c4ad5850f5449389985c5f24c6de9854f34371",
+    "pipeline_hash": "c8d5224488d78d4e60dbcc182de05812062b18436752405fdfaa1bc8f81a1ee5",
+    "runtime": {
+      "python": "3.14.5",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "mlx-lm": "0.32.0",
+      "mlx": "0.32.3",
+      "transformers": "5.18.0",
+      "tokenizers": "0.23.2",
+      "huggingface-hub": "1.33.0"
+    },
+    "model": "krikri-score",
+    "settings": {
+      "hf_id": "ilsp/Llama-Krikri-8B-Instruct-v1.5-4bit-mlx",
+      "revision": "140ab6af4203751d7f91896e6d534f11a1e1863d",
+      "method": "score"
+    },
+    "split": "test",
+    "prompt": "physical_en",
+    "prompt_hash": "9ee836a52688",
+    "prompt_text": "{passage}\n\nIn the sentence between the <target> tags, does the phrase between the <expr> tags describe something that really happens, or is it used figuratively? Answer with one word: literal or idiomatic.\n",
+    "condition": "sentence",
+    "examples": [
+      {
+        "id": "test-001",
+        "expression_id": "e06",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "7db4b9d7dc229c1a81e0c3ee70915f8541db9bfc96791d8c40d5808aa23deb40",
+        "input_prompt_hash": "b7b2eaa6a0f8caa9a600cd01bf63c8653b200b3c74ce7ae7ad77e83152e5b37e"
+      },
+      {
+        "id": "test-002",
+        "expression_id": "e06",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "a994790476d27451b6b297772fdc2f51370850279de3cb2c034cd0d429d21a4d",
+        "input_prompt_hash": "ff45eb2587d9d150437dc3a03e3a9ab26040f367448f8cf5d2fbf85d360dc6cb"
+      },
+      {
+        "id": "test-003",
+        "expression_id": "e07",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "c3e24d6117add736a1e30bc81537960ccc603a59fb60f1ddf6164a7413905a49",
+        "input_prompt_hash": "14101894e25acf6e3a75990101a4dfaa43bf303086db0e70549ea6948188eef2"
+      },
+      {
+        "id": "test-004",
+        "expression_id": "e07",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "02b409769bb120230f3e2052e6c86faa1249d50d635c4cf3cbbe54e90e8ac10b",
+        "input_prompt_hash": "6c6b0aa733e2200e9abd0f4556553c8449e770803e41ceb90125a244313103bf"
+      },
+      {
+        "id": "test-005",
+        "expression_id": "e08",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "0972b26a3a512924ff617ea7ca80bed3f971463314324ec241a9f6d86bc00e0e",
+        "input_prompt_hash": "d01724d99bbfb10fddf3f4f2e41f0394afb8a417300053b00334a1dce31bd290"
+      },
+      {
+        "id": "test-006",
+        "expression_id": "e08",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "d09bb82f5bcfa4e068ca1fb72c225a63855640330f5741b4f88a997d0f63201b",
+        "input_prompt_hash": "db50a4370bf7bd23ba232a39f70411b4f733fa65fd0ba05397537b988a6a6fbe"
+      },
+      {
+        "id": "test-007",
+        "expression_id": "e09",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "5bbd773cd7807d5158e4d6018098a8c04df2f3f4a4c2c8ba0ea292d70de48df1",
+        "input_prompt_hash": "ce30db8641f27893b4d30f2d915432f17960a8316a8c3892877ae85113482398"
+      },
+      {
+        "id": "test-008",
+        "expression_id": "e09",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "e1779619fa3dd2f4011be751d2d48a5368fd6e44da27b45e169ee7eba5eabc0b",
+        "input_prompt_hash": "84beec728d330f9a0f2efe9ba6b4c22918567e910547c9993c72216e1a881742"
+      },
+      {
+        "id": "test-009",
+        "expression_id": "e10",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "7917c73509bde2980f4ab82f581d180175c49b2dfa7a900c4f8dcc211e3f1100",
+        "input_prompt_hash": "5c11c3d1a3e05b8d684f144a686e1bfbf3ae64456531a2402a03c986078c90ef"
+      },
+      {
+        "id": "test-010",
+        "expression_id": "e10",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "dbdd40dfdd74f706716baf72c86c2da923848fd693ce9b4de304873dbaba0e4d",
+        "input_prompt_hash": "2ffb2a86a7d8bbfc03c752a2ea4d48f54ae08018d0348d006f6aee6e973482c6"
+      },
+      {
+        "id": "test-011",
+        "expression_id": "e11",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "c7876d89e28b0b42a9634a459d0f82ad4fa4e2517d437e57c6c60f977babdd23",
+        "input_prompt_hash": "551fb4d59a7fd65d14517ec1eaf307d58826a9944bbc1334fd18349a36303ea1"
+      },
+      {
+        "id": "test-012",
+        "expression_id": "e11",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "7be89e7f2d78e0431f2010f418e043fb85b17945ee9dca707c48029f9509c557",
+        "input_prompt_hash": "1e70331a33f5e71c2f9694a2de9f048819e690e4c7968f31a2306e09bde4e3d4"
+      },
+      {
+        "id": "test-013",
+        "expression_id": "e12",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "612e1262818449dd36da4277d7d6adb74a2dd1589034079244bc67820a5e11cb",
+        "input_prompt_hash": "fb2929635af74df7f6883ccda26723f8688193961c51374b67e15805e41364d0"
+      },
+      {
+        "id": "test-014",
+        "expression_id": "e12",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "ad1388fafbf1e62355f68a074d2e255e4ed46b2ce32d6a3c0014965f86e20a0b",
+        "input_prompt_hash": "fa612227b04e7b2cac321315aad5fa1ce4bc57dbf6e81ca891069ffbbe11d08f"
+      },
+      {
+        "id": "test-015",
+        "expression_id": "e13",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "abed135047c499426c7cd0b6bc2093731b24d7135019d7cae769d25747cb30fb",
+        "input_prompt_hash": "845ea8866c23c82d112a675e7efcdbe9f6e084472133a3161da0c9e54913da21"
+      },
+      {
+        "id": "test-016",
+        "expression_id": "e13",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "eb9e5f46e5b5ef6565a572dea88a01d334257fa9aade85f83a733808c8ede53c",
+        "input_prompt_hash": "9423cbe9105e2d039b7ed2fb37d85f43645ae80f7ace0094ab780950f997e591"
+      },
+      {
+        "id": "test-017",
+        "expression_id": "e14",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "1692e0ce8d8091bd7ad08a790be5c686b5b9e96906ce8a092a29048b36a1f1d3",
+        "input_prompt_hash": "0de172a74590f4f15d4b7df4143e956ad182b704cc7be188b6f3bd8b45e23d8f"
+      },
+      {
+        "id": "test-018",
+        "expression_id": "e14",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "bc2b3ef600a0315c5306204ffdcb814fc7c79b0388d2657819c2ef472aad64a4",
+        "input_prompt_hash": "e840efbde9d23c13a35cfdf1c2f8d8bae8e01e3c2d8e3ec891fa99ec1aeba2d8"
+      },
+      {
+        "id": "test-019",
+        "expression_id": "e15",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "330700565fb685c1be4398811c21d5ff3fa0b07b3520ea90f41611de4db687e7",
+        "input_prompt_hash": "c10d9957946462836fe065ead3bdd42269282e4529d24f95f2249b45badb306c"
+      },
+      {
+        "id": "test-020",
+        "expression_id": "e15",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "a9aa75bd5f3cc92d4a544135aec8264df145e0387d9f2166b3cc4c2c904f801f",
+        "input_prompt_hash": "36441260484e56fa20e7555448f67597fe48c578e436376cf38957f72eda2a2e"
+      },
+      {
+        "id": "test-021",
+        "expression_id": "e16",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "708d3f755fdbee5ddf89df356749fee28cc5251abd4013fe92f7df78474aca2e",
+        "input_prompt_hash": "dc2de6b2e6d4fc3fb869ecbf00264df1fe0592e4af5040cf7542e5fa754ede40"
+      },
+      {
+        "id": "test-022",
+        "expression_id": "e16",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "5d3278540f599bc154d16630f2700dfc1b69f02ef2114a6f2a63fd5c5deab97c",
+        "input_prompt_hash": "159098d7b2978de9e15bbf29b81b61ad577615df609e6afc18042cdc7a745559"
+      },
+      {
+        "id": "test-023",
+        "expression_id": "e17",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "4f7fb43e1d58995a02c6352c3894bf85fa200b5f567082c896454da90dea1723",
+        "input_prompt_hash": "064ef4a5365b68e6708b0e3e57a9e816bda2d7984f5a494734c51f698fb89934"
+      },
+      {
+        "id": "test-024",
+        "expression_id": "e17",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "c7bc5bdeaa567cf785f380ad876fabaacd629350101ce223b7a07e2c8324a9a3",
+        "input_prompt_hash": "f33d185343f0fe3ae6253f406d00a85191377ba68579a5b7e0cbc871af413734"
+      },
+      {
+        "id": "test-025",
+        "expression_id": "e18",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "09f1ea32af59bba02cc15e793a42a4543fac98575c13557ccbb171bd53f6e086",
+        "input_prompt_hash": "f61e0c9b1730ade4aa8fc46f090b3470346006dc189b6c1b72ff2e09faa1c4b4"
+      },
+      {
+        "id": "test-026",
+        "expression_id": "e18",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "51517768b1e96879bdb73225ed00155e8677a7fedc4b73bf3335c48a5a4135b9",
+        "input_prompt_hash": "db92a12486eea0b43d9389860b628362652d2c5d2aa81e4669ec234deb6a158b"
+      },
+      {
+        "id": "test-027",
+        "expression_id": "e19",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "64e26949e9d1c03113b47933d6aa7854404fda1d1f12564b0562f4986491eba0",
+        "input_prompt_hash": "a40878efd1ce7e568ba54612782256832544a56e8cd0597644fb3cd12aa5c1ab"
+      },
+      {
+        "id": "test-028",
+        "expression_id": "e19",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "94609daf118a434638d3c237e5a1b52e40e7baae31a21384d8dc4d0fefb30cef",
+        "input_prompt_hash": "a68754c8c40759114bef2d769ca84ecf09a1109d46e92ce1f04d05be6e61af01"
+      },
+      {
+        "id": "test-029",
+        "expression_id": "e20",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "9ba12835a471b67850907d265e3a82754106e1c96087435c8ebe5607bdeb4a0b",
+        "input_prompt_hash": "306b58a074d6617bf8b44f3252fb627a23b3ac4b052dd32634a4908d2cea1342"
+      },
+      {
+        "id": "test-030",
+        "expression_id": "e20",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "30d23f614f856bcc50c3fbe3068adb0827d8c1d57e1087327041e14693410d84",
+        "input_prompt_hash": "0929295fddaa46d2a53f9d28345afeac9fec87cbeac5288220d6a081b760f78d"
+      },
+      {
+        "id": "test-031",
+        "expression_id": "e21",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "ef73d3c837eca93d5e2e290e62131eba133f0c4f423f0dc51622c164685ec1d4",
+        "input_prompt_hash": "6c8af0d27f0db929736915298dc13f2325310515b9d2f1943b32c664e3d71fb5"
+      },
+      {
+        "id": "test-032",
+        "expression_id": "e21",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "331c02faeb8ef236704b2a39b360302e8862f5824ccf44eb6169def12bee3d1f",
+        "input_prompt_hash": "e69aed190ceac81a35ed50f4427391c4f2a024fcb42bcc9165fb42c4c970c1ff"
+      },
+      {
+        "id": "test-033",
+        "expression_id": "e22",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "1793b3227f2c1cb9c019750810939c8c247c04d047e2c1da1eb6fc87aea93401",
+        "input_prompt_hash": "b4049aebd39b4d792c90555de45dcd6f8a2b7a0794983a2e510d933f9bb17b60"
+      },
+      {
+        "id": "test-034",
+        "expression_id": "e22",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "23c86dbe52a5cd3e6264c64101ef12f7d472254728a01d6c1eea39cd8e526913",
+        "input_prompt_hash": "2f16f29677e3eb12c6fbfb962bac2319b58709402429ab53fc1401226ffa1761"
+      },
+      {
+        "id": "test-035",
+        "expression_id": "e23",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "9c36abe334552cc84369589b847ff069f4a4a1e3275b7cd32e28ece436f71050",
+        "input_prompt_hash": "22a15535360010a32f1a35b745a5c0c1ea703f5cbb8c217d8587864f47b0271d"
+      },
+      {
+        "id": "test-036",
+        "expression_id": "e23",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "c608ecb23091630ef11c31c1c12d70f775ac93369bd61b5a17ba16f48f480438",
+        "input_prompt_hash": "f489d4b412a1b09240c1a10775b5afac05c1cc0b0fc1a165bf33b600fbfa819c"
+      },
+      {
+        "id": "test-037",
+        "expression_id": "e24",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "c3ca0398cce9c4d9e7bab69a1196b7a3bd23231f110be3604b342bae1a5ab754",
+        "input_prompt_hash": "08bdcdb70950731f9788d613d7f019bd7514fef760641fd3c5106205190fa724"
+      },
+      {
+        "id": "test-038",
+        "expression_id": "e24",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "f5c6c657e4848b90e978bfbc7ba22d54ddc13c5e2643c0981d7e380d8853fad1",
+        "input_prompt_hash": "96356dff7c6babf7c29c6f79df181e39678eb98a5161fc4dceb3b8d29bbe9c89"
+      },
+      {
+        "id": "test-039",
+        "expression_id": "e25",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "17f216f7ca14c140e2e7f55258b0f0fcbd5cfe1084705a1b31dd3606d48fa3f1",
+        "input_prompt_hash": "87355e6a9a2c77d9c0e97eae913e1e86e4a1089d894d4ad344c99ae49ab68003"
+      },
+      {
+        "id": "test-040",
+        "expression_id": "e25",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "b93a8bb14ba601fd0edd40665f5eb0eb3a2985bed997a80844375aa15a1ce8f5",
+        "input_prompt_hash": "6b6f0cc7bef749bec0067f00100cef51b3e612e328bf259c61d4e44c7ee2aae4"
+      },
+      {
+        "id": "test-041",
+        "expression_id": "e06",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "868dd0899e29c487dd7dc6006cd0128612f1fed337e9e175d8c3886ae75abee2",
+        "input_prompt_hash": "6cba15d6cde8cca7295880ec4089d94e14107e146dde2736ab8e53ac8abf1729"
+      },
+      {
+        "id": "test-042",
+        "expression_id": "e06",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "f03bf6caeffd0be96ee0310f92a0638558371740e460cbc5bd7aacdc9bc3684b",
+        "input_prompt_hash": "6cba15d6cde8cca7295880ec4089d94e14107e146dde2736ab8e53ac8abf1729"
+      },
+      {
+        "id": "test-043",
+        "expression_id": "e07",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "b7c0823f99cd19887a8037eb020e46532bf53381325fca93d250330ede8a48ab",
+        "input_prompt_hash": "49c2e4f4cde45de7a2616526df2e85142194bf57e790c69972efe242184c086f"
+      },
+      {
+        "id": "test-044",
+        "expression_id": "e07",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "464f6944cc271f4a59033aaf55f696bd711958480d0f25a7337b263c33c67766",
+        "input_prompt_hash": "49c2e4f4cde45de7a2616526df2e85142194bf57e790c69972efe242184c086f"
+      },
+      {
+        "id": "test-045",
+        "expression_id": "e08",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "391f6bf4bad21a45544886774a1ee1728c52400bea106d9d512fb3e512510693",
+        "input_prompt_hash": "e59fd29afe35bfeb97b52576253fec7ce3e7eaf1aaaa0c7c8c47d16866b9767e"
+      },
+      {
+        "id": "test-046",
+        "expression_id": "e08",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "7395b73a35510efac32f87332d80d12ddcb68b3f171274f440bbc6e98fc594f0",
+        "input_prompt_hash": "e59fd29afe35bfeb97b52576253fec7ce3e7eaf1aaaa0c7c8c47d16866b9767e"
+      },
+      {
+        "id": "test-047",
+        "expression_id": "e09",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "6c54244c190a26339b0864e719dd1db7cd9e55cb1ac92943317d3543f9e0c5b5",
+        "input_prompt_hash": "5e205195e92e6f39adc73ad1c75255a777eb557e4c42bc862fc55317efebcccd"
+      },
+      {
+        "id": "test-048",
+        "expression_id": "e09",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "14d26ecdd679b0e7e34641d8005accdc2ac14a2a7b9460ace2b1d54296d124ec",
+        "input_prompt_hash": "5e205195e92e6f39adc73ad1c75255a777eb557e4c42bc862fc55317efebcccd"
+      },
+      {
+        "id": "test-049",
+        "expression_id": "e10",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "91a750ffc83790732c28e5f22e32354507dd73867ab19cca9a48ae47b46fbc02",
+        "input_prompt_hash": "293fb306ab287f63205fc9daaa152702fcbc159f6f4861949bbddd95acc91a66"
+      },
+      {
+        "id": "test-050",
+        "expression_id": "e10",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "5bfd75d4e8a2a793590e95b280f664d329892e38e32c4f9e5f8ed00151267abb",
+        "input_prompt_hash": "293fb306ab287f63205fc9daaa152702fcbc159f6f4861949bbddd95acc91a66"
+      },
+      {
+        "id": "test-051",
+        "expression_id": "e11",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "8eaee86b9cd4148da16c4e17be5e5ea4d2948b45241e5cf2105619d1250a559e",
+        "input_prompt_hash": "aec005dcaf289c0248056a60a4a6daa194f4ffce70f55acab9a9bef219f319d0"
+      },
+      {
+        "id": "test-052",
+        "expression_id": "e11",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "b074b052bb6da1625069a7c28b37171ff919c7f7e42b1b87d578a76428e7043c",
+        "input_prompt_hash": "aec005dcaf289c0248056a60a4a6daa194f4ffce70f55acab9a9bef219f319d0"
+      },
+      {
+        "id": "test-053",
+        "expression_id": "e12",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "3d1b32e7df323fbdd7efcd588f02f5f7ad8d8a5c30ae8db2196bb96fa08ca9a8",
+        "input_prompt_hash": "d133b5f5597e6b1e5291d59b21dada452417758f681b8946415c20b0d7f8ff61"
+      },
+      {
+        "id": "test-054",
+        "expression_id": "e12",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "67e179f2be992771df8fc6162c54fa4a5e09c63619cb7e00f9ac1386fc5b4628",
+        "input_prompt_hash": "d133b5f5597e6b1e5291d59b21dada452417758f681b8946415c20b0d7f8ff61"
+      },
+      {
+        "id": "test-055",
+        "expression_id": "e13",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "18914243090b52a2ff36b372bb35937f1b2feea8d7ee2779730bf80573fecb5b",
+        "input_prompt_hash": "00a0a4c280849e0ec27317eeadbba8b777d3f67b6d91ebe6f9aad8b3d66f67dc"
+      },
+      {
+        "id": "test-056",
+        "expression_id": "e13",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "625f7678151fff473f57143c4f8404cada47fb7f08aec72bb5a459cf228e11c9",
+        "input_prompt_hash": "00a0a4c280849e0ec27317eeadbba8b777d3f67b6d91ebe6f9aad8b3d66f67dc"
+      },
+      {
+        "id": "test-057",
+        "expression_id": "e14",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "3e468f0071bcc1e877d57c0561d184328955149c8f01b5802eb3a23c0abde0a1",
+        "input_prompt_hash": "dc47a96342efd7c23ffcb358329d2e828e43b57d2cb3fbff184ded4a513d363f"
+      },
+      {
+        "id": "test-058",
+        "expression_id": "e14",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "f7ad507c0455e3dd52c446a1690c5cd592134af6eb28c3d31a92e76100694f75",
+        "input_prompt_hash": "dc47a96342efd7c23ffcb358329d2e828e43b57d2cb3fbff184ded4a513d363f"
+      },
+      {
+        "id": "test-059",
+        "expression_id": "e15",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "b120711ce6c35b3d11ad32bc273cd3123b9acca886a0ccd9e61ac27ebba7bba2",
+        "input_prompt_hash": "ca4836f69126abf1c3a03e07fef3aad44ccfb9594fbd038ccbb37f9a8350d5b3"
+      },
+      {
+        "id": "test-060",
+        "expression_id": "e15",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "815f5e7a8f3e3ac4f5e9e705a921c16bd758a690da9579cc6a496e26f27faf92",
+        "input_prompt_hash": "ca4836f69126abf1c3a03e07fef3aad44ccfb9594fbd038ccbb37f9a8350d5b3"
+      },
+      {
+        "id": "test-061",
+        "expression_id": "e16",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "172777fddbd9de3e1f1845441553ada7be79c7f159f57ed9607a7f0ccaae27fe",
+        "input_prompt_hash": "3a8a984000467b4e76f4fd2e8dba2f792478cc93ee31320f5ecb673b8187cad5"
+      },
+      {
+        "id": "test-062",
+        "expression_id": "e16",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "ba23fea6adfef979fa721b32936d77a893f6a9ff4b81ecc6ecaaa34befb81cf0",
+        "input_prompt_hash": "3a8a984000467b4e76f4fd2e8dba2f792478cc93ee31320f5ecb673b8187cad5"
+      },
+      {
+        "id": "test-063",
+        "expression_id": "e17",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "f48d9482eedbc86b15417b55d5b434eca321255a9118065c09e8573a0305b0fb",
+        "input_prompt_hash": "acc3c81b910e5c777077a98bf15ad024d8e3b3800f40b32d494dff6687354c8a"
+      },
+      {
+        "id": "test-064",
+        "expression_id": "e17",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "d735eca5049ae47906d5b4f7ca62da992561b3997d5c5e7a98f45226efd99b4e",
+        "input_prompt_hash": "acc3c81b910e5c777077a98bf15ad024d8e3b3800f40b32d494dff6687354c8a"
+      },
+      {
+        "id": "test-065",
+        "expression_id": "e18",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "3a215f00fcdd758db2255cb3b69fe4b95fd64f3b424d47478903c6b0575f24b0",
+        "input_prompt_hash": "2c29a94aba817ab2f7466a037e15f984ef2354c6bc4866a9dcb21f5106c2038c"
+      },
+      {
+        "id": "test-066",
+        "expression_id": "e18",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "2a07fdad612542df7f19366db997c0b2eb9d408fa184d178dc9dfb1567cd33be",
+        "input_prompt_hash": "2c29a94aba817ab2f7466a037e15f984ef2354c6bc4866a9dcb21f5106c2038c"
+      },
+      {
+        "id": "test-067",
+        "expression_id": "e19",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "6d94c57f0b8ebddb9649523b9007703292890adf74a679b092012b5dd32ab408",
+        "input_prompt_hash": "15db0b2cc4e9b6711e854810bf00fd67b0fbfcb46202a634f33229763c40da33"
+      },
+      {
+        "id": "test-068",
+        "expression_id": "e19",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "c17ed03555851c82c956c7090a7cf83c42614c625adb68cf257739cc4180fffc",
+        "input_prompt_hash": "15db0b2cc4e9b6711e854810bf00fd67b0fbfcb46202a634f33229763c40da33"
+      },
+      {
+        "id": "test-069",
+        "expression_id": "e20",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "e40d6fa243c0d832da1f642294c9fb2190f04cb006abfddd89f3888acac7aa85",
+        "input_prompt_hash": "3dd6df7c0e8d7fe9456527747ddfb73b5b166485b271ee27fa1bf6f55a813501"
+      },
+      {
+        "id": "test-070",
+        "expression_id": "e20",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "c34b482e0f11e9dcb7ae5ad6f9dbd589f5f8321729d4e2a9b423d1b03922328c",
+        "input_prompt_hash": "3dd6df7c0e8d7fe9456527747ddfb73b5b166485b271ee27fa1bf6f55a813501"
+      },
+      {
+        "id": "test-071",
+        "expression_id": "e21",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "e6f2fec7f2a24f779b345d17e9c9724702fd10eedf8a578bbb8d1994e8d6eece",
+        "input_prompt_hash": "a0f8c9344b492328b64487d54e1d52d327e969e38ea6c200c839eec74d0a62ae"
+      },
+      {
+        "id": "test-072",
+        "expression_id": "e21",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "5ae6018c94303aef3f1423e622adb91dd87f72d0bf56264445245cb3c951eb82",
+        "input_prompt_hash": "a0f8c9344b492328b64487d54e1d52d327e969e38ea6c200c839eec74d0a62ae"
+      },
+      {
+        "id": "test-073",
+        "expression_id": "e22",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "6b84a8362eaa85276de139a19232b29f7f0214e370ca19c64a580aaad2d7149d",
+        "input_prompt_hash": "3ce0b98ce4b6bdc558e48ef45d12367bf31954b601f144bd97925bbb3505a561"
+      },
+      {
+        "id": "test-074",
+        "expression_id": "e22",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "d0b5d4785a94423d37dd6ac32543376c0910f88b0dec9c629fbb48f036e86040",
+        "input_prompt_hash": "3ce0b98ce4b6bdc558e48ef45d12367bf31954b601f144bd97925bbb3505a561"
+      },
+      {
+        "id": "test-075",
+        "expression_id": "e23",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "0dce6d2a4cd52ddbcfc8000d3b0d674d6afe8353bb64347e999a7d84d0399e31",
+        "input_prompt_hash": "6d7c9fd8dda3f5e64b1fc8dbac982d91ae1e2c46b9e991b62ab42f1aa7f5ec07"
+      },
+      {
+        "id": "test-076",
+        "expression_id": "e23",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "44682e586be4cae0b7fb8209d3630a60af5f0670dd97c0467444b3c99fe9e81f",
+        "input_prompt_hash": "6d7c9fd8dda3f5e64b1fc8dbac982d91ae1e2c46b9e991b62ab42f1aa7f5ec07"
+      },
+      {
+        "id": "test-077",
+        "expression_id": "e24",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "40489a7ae9e854745c9dfa68a217dad8020aa3b49127ce9fc88b714fe7167558",
+        "input_prompt_hash": "63fb571844a09f84a898487a41ed84fbc9e1b80edb33576d7f293ee2e8ad1446"
+      },
+      {
+        "id": "test-078",
+        "expression_id": "e24",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "e3a55a44220640f9ca50f9f0ec20b1897c3d79484cf0669460cbfbe8c31afcdf",
+        "input_prompt_hash": "63fb571844a09f84a898487a41ed84fbc9e1b80edb33576d7f293ee2e8ad1446"
+      },
+      {
+        "id": "test-079",
+        "expression_id": "e25",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "890c4ecb8d1ffb5754dda99a75c45df4b049f1e0a67121a9dffbc5e838a417da",
+        "input_prompt_hash": "8dac6a04ba8e1775e7f5265d681fba779de21f16d6a00840f03eaf18e6a5a29a"
+      },
+      {
+        "id": "test-080",
+        "expression_id": "e25",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "446895b66ea7cdd80a9ff517d043313a8c3244f57f6b72465b2931f313845521",
+        "input_prompt_hash": "8dac6a04ba8e1775e7f5265d681fba779de21f16d6a00840f03eaf18e6a5a29a"
+      },
+      {
+        "id": "test-081",
+        "expression_id": "e06",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "04250258ac0257e22cf3e0c33de4e4cac33399ecd42adc053155a60e0a991d80",
+        "input_prompt_hash": "cd37cea712664ad76a905be3ae37cb184a1757e19396f0298e42d75f30754817"
+      },
+      {
+        "id": "test-082",
+        "expression_id": "e07",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "8f9fa4ddd72d8834ba91966706dc3b0e461ffe286d3299298d31577f1e98c841",
+        "input_prompt_hash": "9dfda08bf4e0d3a70381847f6cad7f9e37226abec7194107fa9b67ef0482de93"
+      },
+      {
+        "id": "test-083",
+        "expression_id": "e08",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "69fcd05693047ecfcccd9c7a6676695aca65176c85e250c68a611e1bb0cf8057",
+        "input_prompt_hash": "7c0e4252d5390cfd2bc8467afe456b5b2755988fd43f773c31d43063bb052313"
+      },
+      {
+        "id": "test-084",
+        "expression_id": "e09",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "b646142a9087a244145320e704dd1436e82622b7e697a709ba251a87b0ef24fa",
+        "input_prompt_hash": "1d1440b990c1d7ad3fb9addd4bc3dff1e5d0574b7e64b51f4c01677373611238"
+      },
+      {
+        "id": "test-085",
+        "expression_id": "e10",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "62edf25c7a4ace81fa642416f69353cee9a6359ca9448bdc96f470d51ad541ec",
+        "input_prompt_hash": "d089addca40f988e7d39c61cf2ff29bf856c94f1951e49c32d75a010e7f767a1"
+      },
+      {
+        "id": "test-086",
+        "expression_id": "e11",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "538991d9a7b47103a66ee561d86667dccfceae82f7716aa1be2e58d237f7543f",
+        "input_prompt_hash": "d797cc60b3598d9b9c4797c2be21f8bc36bd4749e8893d4c271646d89e683c10"
+      },
+      {
+        "id": "test-087",
+        "expression_id": "e12",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "8b6cd24e519e5eaa1d4626139d88a248871d59387d380d9a9b93a11732fa0a86",
+        "input_prompt_hash": "7f03f914e1dc63ad91bdac14336da4a5dd44910725d53b62442fb8e73c152090"
+      },
+      {
+        "id": "test-088",
+        "expression_id": "e13",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "76489b22e21d9f8242777ee55a4f2d60c70e46a6c771dca545fef70c87671276",
+        "input_prompt_hash": "e19cf1997a3161db329d97a13e2ce353f93b484f8228b65bbb9c9fa417a6cb08"
+      },
+      {
+        "id": "test-089",
+        "expression_id": "e14",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "8a44b27c20d65f26c11db828eb1ec9bd3f6c8e664ff410d8ce90111b61672462",
+        "input_prompt_hash": "274cadc38bea7675df7c179199f13cded2469c607a5ccdf486adffa4b9fd0431"
+      },
+      {
+        "id": "test-090",
+        "expression_id": "e15",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "824e758a77cc24eada5113ae3136a5e9340f390cff100a0874ccbd6e973d4b5a",
+        "input_prompt_hash": "a65292cd0393f3ff7a5373929a19dc8379960b8c6560bea4bf3054ac6fe7ecbb"
+      },
+      {
+        "id": "test-091",
+        "expression_id": "e16",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "3caac79816de74da0ef6ef50034391e68c348775fd8847ad370405c5509cea6f",
+        "input_prompt_hash": "cdddee165fdd999e3ac47508c9ee08853268abcf12731191cfe9760f43b37080"
+      },
+      {
+        "id": "test-092",
+        "expression_id": "e17",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "c77ae5c8fe065741d16faa5f4d44b3e6b6ca833bfe39f340ce8bcac01db6cf0a",
+        "input_prompt_hash": "aec43fea7688e31bd0f6b287fd599817d1e71fafa7bcb08e0246e6fe6aa48f45"
+      },
+      {
+        "id": "test-093",
+        "expression_id": "e18",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "6d12891b4160255c5df98a4bfab59710808142c4913cfbe5f37f4c29b5e97050",
+        "input_prompt_hash": "84a55c7de8f033ea869dadf21cb0fc47642b3a87456add3cb5fa03302c945104"
+      },
+      {
+        "id": "test-094",
+        "expression_id": "e19",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "a25f2ec92f5875154813c03c60426d9a2ff7dc8bd13d520779c67efd62f2abb8",
+        "input_prompt_hash": "d0ef1d9b761edec5a18e1cf6d558f03d08a766b993e8acd35b0ecbd3a060a576"
+      },
+      {
+        "id": "test-095",
+        "expression_id": "e20",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "199d948bf7f3e44a4eeed627dbd68c625ce203647f163012915609a4925f0e24",
+        "input_prompt_hash": "ce03648df9e14a70eeb3908fe0fc4f66e333fd16ce2bc7010660c10d4a3b7aed"
+      },
+      {
+        "id": "test-096",
+        "expression_id": "e21",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "f05dbcbd35a0f93632c5f6104c2da159c51545dbed90c7f66108582fe6d1e830",
+        "input_prompt_hash": "b83390b7fb43f7f2db4df763887fb10e7b1b557e55f8a0f8f8fa99a52016d37c"
+      },
+      {
+        "id": "test-097",
+        "expression_id": "e22",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "e1bc72ebe8f1ae9067b551c97f0c8e691e846bffcdc48bc48f4a0f90eb8e8e88",
+        "input_prompt_hash": "3ef06db6d2a0135bd2c3db389b68afd97a6fcdc0dbe69ff84278067263d76ba3"
+      },
+      {
+        "id": "test-098",
+        "expression_id": "e23",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "7ff196a966fc15bb85b0c897122739e2039bbdc5963afe3e1607103e451f9ed3",
+        "input_prompt_hash": "2c9bbe620c2e89206bc4bf011d41ac404c862a7d6ffdb31515d0742175c1e9ce"
+      },
+      {
+        "id": "test-099",
+        "expression_id": "e24",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "9f78c8279ce028408f85c3bda72eb1d6633a5862255f38e01ab1300cab6cfa16",
+        "input_prompt_hash": "97a9d92849442ec45b0b651ec68aebf7dfc344d2a42b0f9133f1b5837a0a67f9"
+      },
+      {
+        "id": "test-100",
+        "expression_id": "e25",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "f38a614d82d8275ae485195a36270ab5b11f3db22425f389deb5a7a191e6ba90",
+        "input_prompt_hash": "df0fca950b686d764bcbc8571a751b25a4b265ce2d430f6b01040b6c6a0c2014"
+      }
+    ]
+  }
+}
