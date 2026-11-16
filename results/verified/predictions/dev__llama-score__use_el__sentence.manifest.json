@@ -1,0 +1,190 @@
+{
+  "run_id": "cdd610c597250da1c1af8f3829e78bc9275a8692d8ca5fcfdb0f3411fb48f641",
+  "config": {
+    "protocol_version": 1,
+    "data_hash": "93d4a05ea1bbdeb0bfd68206ae687f4240ccdbd5a0ecef8e3afbe008b436607c",
+    "pipeline_hash": "c8d5224488d78d4e60dbcc182de05812062b18436752405fdfaa1bc8f81a1ee5",
+    "runtime": {
+      "python": "3.14.5",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "mlx-lm": "0.32.0",
+      "mlx": "0.32.3",
+      "transformers": "5.18.0",
+      "tokenizers": "0.23.2",
+      "huggingface-hub": "1.33.0"
+    },
+    "model": "llama-score",
+    "settings": {
+      "hf_id": "mlx-community/Llama-3.1-8B-Instruct-4bit",
+      "revision": "90215b22ec18e72f623dde2ea7af4097025160e2",
+      "method": "score"
+    },
+    "split": "dev",
+    "prompt": "use_el",
+    "prompt_hash": "79109e9c3edd",
+    "prompt_text": "Παρακάτω υπάρχει ένα απόσπασμα στα Νέα Ελληνικά. Μία πρόταση είναι σημειωμένη με τις ετικέτες <target>, και μέσα σε αυτήν οι λέξεις της έκφρασης «{expression}» είναι σημειωμένες με τις ετικέτες <expr>.\n\nΗ έκφραση αυτή έχει μια γνωστή μεταφορική (ιδιωματική) σημασία, αλλά οι ίδιες λέξεις μπορούν να χρησιμοποιηθούν και κυριολεκτικά, για να περιγράψουν μια πραγματική, φυσική κατάσταση. Μην αποφασίσεις αν η έκφραση είναι ιδιωματισμός γενικά. Αποφάσισε πώς χρησιμοποιείται στη συγκεκριμένη πρόταση:\n\n- κυριολεκτικά: οι λέξεις περιγράφουν αυτό που πραγματικά συμβαίνει.\n- μεταφορικά: οι λέξεις δεν περιγράφουν αυτό που πραγματικά συμβαίνει· η έκφραση ως σύνολο έχει τη μεταφορική της σημασία.\n\nΑπόσπασμα:\n{passage}\n\nΑπάντησε με μία μόνο λέξη: κυριολεκτικά ή μεταφορικά.\n",
+    "condition": "sentence",
+    "examples": [
+      {
+        "id": "pilot-001",
+        "expression_id": "e01",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "5c5c2e565efc7413829c73ba7a3d09ede52d8f46f2750a6650dda159feadf92f",
+        "input_prompt_hash": "0e0df0cce158d1862c82fcce6be5959b6cec4b6d990f1c9790a872934376f15d"
+      },
+      {
+        "id": "pilot-002",
+        "expression_id": "e01",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "cb6295af4e9cc10cf6150bf1f0f1814bb4849ccd778d50a80e31bce94e98d33f",
+        "input_prompt_hash": "43349bdd4d836e2ec27a6f0ea334a862bcdb9ca815f327356ff7d4ee333a59d7"
+      },
+      {
+        "id": "pilot-003",
+        "expression_id": "e01",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "4a0e77b22ee4b44a238280444c34af6fd52bcb945cce063870d0ee652441787e",
+        "input_prompt_hash": "212f48dcd60cb0ef6e8a0c66dba81b86dfa175f3fcd1257b8999d4bd4f8f1b5f"
+      },
+      {
+        "id": "pilot-004",
+        "expression_id": "e01",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "0fcfc29c9c54883a28fea95220b441226bb1239669e58a2c9d9fa5b6daf3e30e",
+        "input_prompt_hash": "212f48dcd60cb0ef6e8a0c66dba81b86dfa175f3fcd1257b8999d4bd4f8f1b5f"
+      },
+      {
+        "id": "pilot-005",
+        "expression_id": "e02",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "2d1118b51bf3d2114a090fc9d10d0966e4b296a0db8a2ec5968e42e0c7f7b1bf",
+        "input_prompt_hash": "0954abec7330ca3f6e897148f1bc4fc0b7c3ebdfe69af8c08c271ff424826fcf"
+      },
+      {
+        "id": "pilot-006",
+        "expression_id": "e02",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "fe833149ee19551d7554725ab4f612184a1e9edaa469f9d6b60ace70e3ef8a56",
+        "input_prompt_hash": "5afecf5947a5614f0f8818724f01dba18aa6b1cf63df6a78a34977da5de9a089"
+      },
+      {
+        "id": "pilot-007",
+        "expression_id": "e02",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "40d608f3d80e982cd7f12af5020ffcac39261c83ea80fc20302d7da8ccb868a4",
+        "input_prompt_hash": "429fc2d1da49d1fc39131017665a21140af96e9acef5430d07cab4576fb7a551"
+      },
+      {
+        "id": "pilot-008",
+        "expression_id": "e02",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "0a75d2a453c5bee631b3e6612205ea08cb940eca92b051fc3dcf45e40423f7f0",
+        "input_prompt_hash": "429fc2d1da49d1fc39131017665a21140af96e9acef5430d07cab4576fb7a551"
+      },
+      {
+        "id": "pilot-009",
+        "expression_id": "e03",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "4935be5c2819408547faf638919a4b5581da04f9b836d0fc57c130c68ff40ef1",
+        "input_prompt_hash": "04c8cb95949b634b9b4708d8c3187e714c5308941672407cd9ecb5f7c377269a"
+      },
+      {
+        "id": "pilot-010",
+        "expression_id": "e03",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "e4876e6dc57e1eb3e1cef88148bbae61298107c4bf03d2b4d96056bdeaaa2e00",
+        "input_prompt_hash": "091df7828811b234e040af80f511bca6afaca0ceec71b6c7d736ea1f41b09d79"
+      },
+      {
+        "id": "pilot-011",
+        "expression_id": "e03",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "c9bdf55ab884e17c9fd397e1925d999c0b5f9207b5182b94fef67fbb177f04ce",
+        "input_prompt_hash": "6d6282089dbe5e7101bbf02f4fbf3f1b562758a9b5f63dda7e5c4182c700fb4c"
+      },
+      {
+        "id": "pilot-012",
+        "expression_id": "e03",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "02d9548746f2894f8a397b8259554877bc73965982c20b096487d31f590639da",
+        "input_prompt_hash": "6d6282089dbe5e7101bbf02f4fbf3f1b562758a9b5f63dda7e5c4182c700fb4c"
+      },
+      {
+        "id": "pilot-013",
+        "expression_id": "e04",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "12978e1c7692284d2716a5209c297601f0fc5ef4c226af5b000d76e6d3d15acc",
+        "input_prompt_hash": "d552b22e4ecd43df5bdab9d49b1c0dba98528576c72e73d456ea8f5f17dec116"
+      },
+      {
+        "id": "pilot-014",
+        "expression_id": "e04",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "ee540f5fb3f0df24f233d3e85314716d2b31e3be4822a2fdafb4ad94b2bcfafe",
+        "input_prompt_hash": "e40c6e5ce2899e37e31183000dafe3565626266785a128430d0d4eb65449a743"
+      },
+      {
+        "id": "pilot-015",
+        "expression_id": "e04",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "856b475099dd464ade1e4f7bc1ebba87bca77d073599f82cf62e177a2a3280d6",
+        "input_prompt_hash": "fb6f4fa5f96d38a02dc92f08baaee7557b50f181f5a477d91d9db7284debe68b"
+      },
+      {
+        "id": "pilot-016",
+        "expression_id": "e04",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "11b99c1e39f80e1afd01efb34c3faf604240a007c3ff685d5b91660aa700b632",
+        "input_prompt_hash": "fb6f4fa5f96d38a02dc92f08baaee7557b50f181f5a477d91d9db7284debe68b"
+      },
+      {
+        "id": "pilot-017",
+        "expression_id": "e05",
+        "gold": "literal",
+        "sentence_sufficient": true,
+        "input_hash": "00ed493650902d43491f6f1604eba7b12b96b87ddf5a8727346d9758463bd55d",
+        "input_prompt_hash": "61644f32a3ee7de96b6c165a8ad5d32ad679d50091aa1d2e810c059142973635"
+      },
+      {
+        "id": "pilot-018",
+        "expression_id": "e05",
+        "gold": "idiomatic",
+        "sentence_sufficient": true,
+        "input_hash": "ca6cc510f95bdc72287096f66d882139e137da46aab345612205236b432878ba",
+        "input_prompt_hash": "cd24ce17151b3772e9c331704e02e15a451fadeb2e77b14c4cc92565f58d8e35"
+      },
+      {
+        "id": "pilot-019",
+        "expression_id": "e05",
+        "gold": "literal",
+        "sentence_sufficient": false,
+        "input_hash": "3ae8edfbd043e65ba4127b6abc273d5e33d4ba71a89a3e3acfedb79574fca3d2",
+        "input_prompt_hash": "718d9996dfacefb4cea41fec9c1a142bb1c0f6e2a76aa75013f6995bf7d2bf58"
+      },
+      {
+        "id": "pilot-020",
+        "expression_id": "e05",
+        "gold": "idiomatic",
+        "sentence_sufficient": false,
+        "input_hash": "251081a543bafeaca2c7e9a06cb96f8f490547de00fcbed961d32d9fca3bf529",
+        "input_prompt_hash": "718d9996dfacefb4cea41fec9c1a142bb1c0f6e2a76aa75013f6995bf7d2bf58"
+      }
+    ]
+  }
+}
