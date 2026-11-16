@@ -1,0 +1,32 @@
+{
+  "computed_on": "2026-11-16",
+  "status": "Pre-adjudication agreement on the 40-item test subset; no disagreements, so adjudication applies no changes.",
+  "reviewer1_id": "ann_1",
+  "reviewer2_id": "ann_2",
+  "reviewer2_id_note": "Same second reviewer as the pilot; confirmed by Angeliki to have worked from the blind reviewer.csv only.",
+  "coverage": {
+    "split": "test",
+    "reviewed": 40,
+    "total": 100,
+    "selection": "One literal and one idiomatic example per expression, random.Random(0) over sorted IDs; see data/README.md"
+  },
+  "source_sha256": "51566ca87d9e2c329c5ae0f355ced5929896cf3fae886710a905d209119af784",
+  "completed_csv_sha256": "4e2ae0c11855ed0d738d73ba89b5bdd9afb8ac9d1d21cc69407a97e030e75fc7",
+  "labels": {
+    "agree": 40,
+    "n": 40,
+    "raw_agreement": 1.0,
+    "cohen_kappa": 1.0,
+    "disagreements": []
+  },
+  "sentence_sufficiency": {
+    "agree": 40,
+    "n": 40,
+    "raw_agreement": 1.0,
+    "disagreement_ids": []
+  },
+  "pending_adjudication": {
+    "count": 0,
+    "ids": []
+  }
+}

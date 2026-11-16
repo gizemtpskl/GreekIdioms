@@ -122,6 +122,16 @@ reuse check are complete: saved inputs and gold labels are identical, and
 [execution limitations](../README.md#checked-development-runs-after-pilot-adjudication)
 before starting final testing.
 
+## Test review packet exported on 16 November 2026
+
+`data/review/final/` holds a blank packet for 40 of the 100 test examples:
+for each of the 20 test expressions, one literal and one idiomatic example,
+drawn with `random.Random(0)` from the IDs sorted within each expression and
+label, then shuffled by the export (`--seed 0`). The selection was made before
+any test-set model predictions existed. `manifest.json` lists the 40 IDs and
+the fingerprint of the unchanged test file. The remaining 60 examples keep the
+primary annotator's labels and must be reported as not double-annotated.
+
 ## Review workflow
 
 These commands run from the repository root after setup. For annotation work and
