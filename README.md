@@ -9,7 +9,7 @@ Can pretrained language models tell literal from idiomatic uses of Modern Greek 
 | dev | `data/pilot/pilot.jsonl` | 5 | 20 (10 literal / 10 idiomatic) | choosing the prompt |
 | test | `data/final/final.jsonl` | 20 | 100 (40 literal / 60 idiomatic) | the reported results |
 
-No expression appears in both splits. Every expression currently includes a **minimal pair**: the same target sentence twice, with different reference labels and contexts. These constructed examples still require independent Greek review. See [data/README.md](data/README.md) for the fields. `python -m idioms.data` checks both files, rejects split overlap, and prints an overview. Ambiguous examples remain in the files and are excluded from binary evaluation.
+No expression appears in both splits. Every expression currently includes a **minimal pair**: the same target sentence twice, with different reference labels and contexts. All examples were constructed for this project. A second annotator independently reviewed all 20 pilot examples and 40 of the 100 test examples (see [Independent annotation review](#independent-annotation-review)). See [data/README.md](data/README.md) for the fields. `python -m idioms.data` checks both files, rejects split overlap, and prints an overview. Ambiguous examples remain in the files and are excluded from binary evaluation.
 
 ## Models
 
@@ -57,6 +57,13 @@ See the [recorded review](data/README.md#pilot-review-recorded-on-12-november-20
 The original submission and independent judgments are preserved. Attribution and
 adjudication notes are optional; the submitted blank values remain blank.
 
+The test review is in `data/review/final/`: 40 of the 100 test examples, one
+literal and one idiomatic example per expression, selected before any test
+predictions existed. Agreement is 40/40 on labels (Cohen's kappa 1.0) and 40/40 on
+sentence sufficiency, so no adjudication was needed. The other 60 test examples
+have only the primary annotator's judgments. See the
+[recorded test review](data/README.md#test-review-recorded-on-16-november-2026).
+
 For a new independent review, read the annotation rules and practice on examples
 outside the review set, then give the reviewer only a blank CSV and the guidelines.
 Compute agreement before discussing disagreements. Resolve all pending labels
@@ -68,7 +75,9 @@ The experiment reads the canonical `data/pilot/pilot.jsonl` and
 human review, retain the annotation history and adopt the approved output at the
 corresponding canonical path before freezing the experiment. The canonical pilot
 now contains the completed adjudication; its original primary annotations remain
-in `data/review/pilot/source.jsonl`. The test dataset is unchanged.
+in `data/review/pilot/source.jsonl`. The canonical test file now carries the review
+fields for its 40 reviewed examples; its labels and sentence-sufficiency judgments
+are unchanged, and the pre-review file remains in `data/review/final/source.jsonl`.
 
 ## Running the experiment
 
@@ -83,6 +92,18 @@ python -m idioms.figures --split test --prompt <chosen prompt> --results-dir res
 - **The test step** reuses the saved models, settings, method and prompt. It rejects a different `--models` list or changed development data, inference code, or prompt. `--method` and `--prompts` are dev-only options.
 - **Interrupted runs can be restarted:** only verified completed predictions are skipped. Changed inputs, labels, settings, prompts, inference code, or runtime versions require a new results directory.
 - **Close memory-heavy apps first:** each model needs about 5 GB.
+
+### Reported results
+
+The results in the project report are in `results/verified/`: the development
+prompt selection (`chosen_prompt.json`, `dev_summary.csv`) and the test runs with
+`physical_en` (`test_summary.csv`, `predictions/`, `figures/`). Every reported score
+and figure can be recomputed from the saved predictions without loading a model:
+
+```bash
+python -m idioms.evaluate --split test --prompt physical_en --details --results-dir results/verified
+python -m idioms.figures --split test --prompt physical_en --results-dir results/verified
+```
 
 Outputs:
 
@@ -134,11 +155,11 @@ predictions, manifests, and choices in both directories remain untouched.
 
 This check does not make the archives directly resumable. The current data and
 pipeline fingerprints and this machine's runtime differ from the saved setup,
-so `experiment test` still rejects the archived choice. Before running the test
-set, document a compatible execution setup and an explicit procedure for carrying
-forward the verified prompt choice, or rerun development in a fresh directory.
-Do not edit the archived fingerprints to pass the check. No new model inference
-was performed for this audit.
+so `experiment test` rejects the archived choice. Development was therefore rerun
+in the fresh directory `results/verified/`, which selected the same prompt
+(`physical_en`, mean macro-F1 0.5657), and the test runs were made from that
+selection. Do not edit the archived fingerprints to pass the check. No new model
+inference was performed for this audit.
 
 ### Answer parsing and failures
 

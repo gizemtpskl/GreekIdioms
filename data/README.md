@@ -61,8 +61,7 @@ cannot be used for inference until adjudicated.
 All 20 pilot examples have a submitted second review. The original submission
 in `review/pilot/reviewer.csv` is preserved unchanged. The imported second review
 uses the pseudonymous identifier `ann_2`; this identifies the submission, not a
-verified name. Confirm the reviewer's background and independent-review procedure
-with Angeliki for the final report.
+verified name.
 
 Label agreement on the submitted judgments is **17/20 (85%)**, with **Cohen's
 kappa = 0.714286**, including the ambiguous judgment. The label disagreements are:
@@ -96,8 +95,8 @@ change the judgments. All 12 decisions have now been imported. The final labels
 match the primary labels; only `pilot-011` changes sentence sufficiency from
 `false` to `true`. There are no pending rows in `adjudicated.jsonl`.
 The adjudicated output is now active at `data/pilot/pilot.jsonl`; the original
-primary dataset remains in `review/pilot/source.jsonl`. This review covers the
-pilot only; the test dataset is unchanged.
+primary dataset remains in `review/pilot/source.jsonl`. The test review is
+described [below](#test-review-recorded-on-16-november-2026).
 
 For any future decision sheet, fill `final_label` and `final_sentence_sufficient`
 for every row, including rows where only sufficiency differs. `adjudicator` and
@@ -119,18 +118,24 @@ replace them with agreement on the final labels. Adoption and the development-ru
 reuse check are complete: saved inputs and gold labels are identical, and
 `physical_en` remains the selected prompt. See the
 [reuse audit](../results/reviewed_dev_check.json) and
-[execution limitations](../README.md#checked-development-runs-after-pilot-adjudication)
-before starting final testing.
+[execution limitations](../README.md#checked-development-runs-after-pilot-adjudication).
 
-## Test review packet exported on 16 November 2026
+## Test review recorded on 16 November 2026
 
-`data/review/final/` holds a blank packet for 40 of the 100 test examples:
+`data/review/final/` holds the review of 40 of the 100 test examples:
 for each of the 20 test expressions, one literal and one idiomatic example,
 drawn with `random.Random(0)` from the IDs sorted within each expression and
 label, then shuffled by the export (`--seed 0`). The selection was made before
 any test-set model predictions existed. `manifest.json` lists the 40 IDs and
-the fingerprint of the unchanged test file. The remaining 60 examples keep the
-primary annotator's labels and must be reported as not double-annotated.
+the fingerprint of the test file at export, which is preserved as `source.jsonl`.
+
+The second reviewer (`ann_2`, the same as for the pilot) worked from the blind
+`reviewer.csv` only. Agreement with the primary labels is **40/40** (Cohen's
+kappa 1.0), and **40/40** on sentence sufficiency (`agreement.json`), so
+`adjudication.csv` has no rows and adjudication changed nothing. The review fields
+of the 40 examples were added to `final/final.jsonl` without changing any label or
+sentence-sufficiency judgment. The remaining 60 examples keep the primary
+annotator's labels and are reported as not double-annotated.
 
 ## Review workflow
 
